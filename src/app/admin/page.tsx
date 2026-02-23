@@ -1,0 +1,133 @@
+import { verifyDashboardToken } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { apiKeys, buckets, files } from "@/lib/schema";
+import { count, sum, eq } from "drizzle-orm";
+import { PageShell } from "@/components/page-shell";
+import { StatsCards } from "@/components/admin/stats-cards";
+import { KeysTable, type KeyRow } from "@/components/admin/keys-table";
+import { BucketsTable, type BucketRow } from "@/components/admin/buckets-table";
+import Link from "next/link";
+
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ token?: string }>;
+}) {
+  const { token } = await searchParams;
+
+  // ── Auth gate ──────────────────────────────────────────────────────────
+  if (!token || !verifyDashboardToken(token)) {
+    return (
+      <PageShell>
+        <div className="flex min-h-[60vh] flex-col items-center justify-center">
+          <h1 className="font-heading text-3xl text-text">
+            Invalid or expired dashboard token
+          </h1>
+          <p className="mt-4 max-w-lg text-center text-sm text-text-muted">
+            Dashboard tokens expire after 24 hours. Generate a new link:
+          </p>
+          <pre className="mt-4 rounded-lg border border-border bg-surface px-4 py-3 font-code text-sm text-accent">
+            {`curl -H 'Authorization: Bearer $ADMIN_API_KEY' \\\n  $BASE_URL/api/admin/dashboard-link`}
+          </pre>
+          <Link
+            href="/"
+            className="mt-6 text-sm text-text-muted transition-colors hover:text-text"
+          >
+            Back to Home
+          </Link>
+        </div>
+      </PageShell>
+    );
+  }
+
+  // ── Stats queries ──────────────────────────────────────────────────────
+  const [bucketCount] = db.select({ value: count() }).from(buckets).all();
+  const [fileCount] = db.select({ value: count() }).from(files).all();
+  const [storageResult] = db
+    .select({ value: sum(files.size) })
+    .from(files)
+    .all();
+  const [keyCount] = db.select({ value: count() }).from(apiKeys).all();
+
+  const totalBuckets = bucketCount?.value ?? 0;
+  const totalFiles = fileCount?.value ?? 0;
+  const totalStorage = Number(storageResult?.value ?? 0);
+  const totalKeys = keyCount?.value ?? 0;
+
+  // ── Keys data ──────────────────────────────────────────────────────────
+  // For each key, count how many buckets it owns
+  const allKeys = db.select().from(apiKeys).all();
+  const keyRows: KeyRow[] = allKeys.map((k) => {
+    const [bucketCountForKey] = db
+      .select({ value: count() })
+      .from(buckets)
+      .where(eq(buckets.keyHash, k.key))
+      .all();
+    return {
+      prefix: k.prefix,
+      name: k.name,
+      createdAt: k.createdAt,
+      lastUsedAt: k.lastUsedAt,
+      bucketCount: bucketCountForKey?.value ?? 0,
+    };
+  });
+
+  // ── Buckets data ───────────────────────────────────────────────────────
+  const allBuckets = db.select().from(buckets).all();
+  const bucketRows: BucketRow[] = allBuckets.map((b) => {
+    const [fileCountForBucket] = db
+      .select({ value: count() })
+      .from(files)
+      .where(eq(files.bucketId, b.id))
+      .all();
+    return {
+      id: b.id,
+      name: b.name,
+      owner: b.owner,
+      fileCount: fileCountForBucket?.value ?? 0,
+      createdAt: b.createdAt,
+      expiresAt: b.expiresAt,
+    };
+  });
+
+  // ── Render ─────────────────────────────────────────────────────────────
+  return (
+    <PageShell>
+      <div className="py-12 sm:py-16">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="font-heading text-4xl text-text sm:text-5xl">
+            Admin Dashboard
+          </h1>
+          <p className="mt-2 text-sm text-text-muted">
+            System overview and management for Clawd Files.
+          </p>
+        </div>
+
+        {/* Stats */}
+        <StatsCards
+          buckets={totalBuckets}
+          files={totalFiles}
+          storageBytes={totalStorage}
+          apiKeys={totalKeys}
+        />
+
+        {/* API Keys */}
+        <section className="mt-12">
+          <h2 className="mb-4 font-heading text-2xl text-text">API Keys</h2>
+          <div className="rounded-lg border border-border bg-surface p-4">
+            <KeysTable keys={keyRows} token={token} />
+          </div>
+        </section>
+
+        {/* Buckets */}
+        <section className="mt-12">
+          <h2 className="mb-4 font-heading text-2xl text-text">Buckets</h2>
+          <div className="rounded-lg border border-border bg-surface p-4">
+            <BucketsTable buckets={bucketRows} token={token} />
+          </div>
+        </section>
+      </div>
+    </PageShell>
+  );
+}
