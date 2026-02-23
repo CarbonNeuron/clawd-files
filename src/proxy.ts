@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 const BYPASS_PREFIXES = [
   "/raw/",
   "/api/",
-  "/s/",
   "/admin",
   "/docs",
   "/llms.txt",
@@ -13,13 +12,6 @@ const BYPASS_PREFIXES = [
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  // Short URL redirect: /s/<id> → rewrite to API handler
-  if (pathname.startsWith("/s/")) {
-    const url = request.nextUrl.clone();
-    url.pathname = `/api${pathname}`;
-    return NextResponse.rewrite(url);
-  }
 
   // Bypass specific paths
   for (const prefix of BYPASS_PREFIXES) {

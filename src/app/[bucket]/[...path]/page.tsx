@@ -227,7 +227,6 @@ export default async function FilePreviewPage({
         mimeType={file.mimeType}
         size={file.size}
         expiresAt={bucket.expiresAt}
-        shortId={file.shortId ?? null}
       >
         {previewType === "code" && textContent !== null && (
           <CodePreview content={textContent} filePath={filePath} />
