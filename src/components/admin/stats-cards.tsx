@@ -1,5 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
-
 type StatsCardsProps = {
   buckets: number;
   files: number;
@@ -26,8 +24,8 @@ export function StatsCards(props: StatsCardsProps) {
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {STATS_CONFIG.map(({ key, label, format, glyph }) => (
-        <Card key={key} className="rounded-lg border-border bg-surface/80 p-0 py-0 glow-cyan-hover transition-all">
-          <CardContent className="p-5">
+        <div key={key} className="rounded-lg border border-border bg-surface/80 glow-cyan-hover transition-all">
+          <div className="p-5">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-accent/50 text-xs">{glyph}</span>
               <p className="text-xs text-text-muted font-code uppercase tracking-wider">{label}</p>
@@ -35,8 +33,8 @@ export function StatsCards(props: StatsCardsProps) {
             <p className="font-heading text-3xl text-text">
               {format ? format(props[key]) : props[key].toLocaleString()}
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       ))}
     </div>
   );
