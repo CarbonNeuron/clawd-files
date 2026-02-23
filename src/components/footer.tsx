@@ -1,10 +1,8 @@
-import { Separator } from "@/components/ui/separator";
-
 export function Footer() {
   return (
     <footer className="border-t border-border py-6">
       <div className="flex items-center justify-center gap-3 text-sm text-text-muted">
-        <Separator variant="gradientRight" className="w-8" />
+        <div className="w-8 h-px bg-gradient-to-r from-transparent to-border" />
         <p className="font-code text-xs tracking-wider">
           Designed by Clawd{" "}
           <span
@@ -14,7 +12,7 @@ export function Footer() {
             🦀
           </span>
         </p>
-        <Separator variant="gradientLeft" className="w-8" />
+        <div className="w-8 h-px bg-gradient-to-r from-border to-transparent" />
       </div>
     </footer>
   );
