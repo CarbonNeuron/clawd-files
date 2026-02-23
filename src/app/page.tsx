@@ -1,7 +1,4 @@
 import { PageShell } from "@/components/page-shell";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { highlight } from "@/lib/highlight";
 import Link from "next/link";
 
@@ -101,20 +98,17 @@ export default async function Home() {
         </p>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <Button asChild className="glow-cyan-hover bg-accent text-bg hover:bg-accent/90 hover:text-bg">
-            <Link href="/docs">
+          <Link href="/docs" className="btn btn-primary glow-cyan-hover">
               View API Docs
-            </Link>
-          </Button>
-          <Button asChild variant="outline" className="border-border bg-surface text-text hover:bg-surface-hover hover:border-accent/30 hover:text-text">
-            <a
+          </Link>
+          <a
+              className="btn btn-outline"
               href="https://github.com/nichochar/clawd-files"
               target="_blank"
               rel="noopener noreferrer"
             >
               GitHub
-            </a>
-          </Button>
+          </a>
         </div>
 
         {/* Decorative depth marker */}
@@ -126,16 +120,16 @@ export default async function Home() {
       {/* ── Feature Cards ─────────────────────────────────────── */}
       <section className="pb-20 sm:pb-24">
         <div className="flex items-center gap-3 mb-8">
-          <Separator variant="gradient" className="flex-1" />
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
           <span className="text-xs text-text-muted font-code uppercase tracking-widest">Systems</span>
-          <Separator variant="gradient" className="flex-1" />
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           {FEATURES.map((feature) => (
-            <Card
+            <div
               key={feature.title}
-              className="group relative rounded-lg border-border bg-surface/80 p-6 py-6 transition-all duration-300 hover:border-accent/30 hover:bg-surface glow-cyan-hover"
+              className="group relative rounded-lg border border-border bg-surface/80 p-6 transition-all duration-300 hover:border-accent/30 hover:bg-surface glow-cyan-hover"
             >
               {/* Corner accent */}
               <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-accent/20 rounded-tr-lg pointer-events-none" />
@@ -152,7 +146,7 @@ export default async function Home() {
               <p className="mt-2 text-sm leading-relaxed text-text-muted">
                 {feature.description}
               </p>
-            </Card>
+            </div>
           ))}
         </div>
       </section>
@@ -160,9 +154,9 @@ export default async function Home() {
       {/* ── Code Example ──────────────────────────────────────── */}
       <section className="pb-24 sm:pb-32">
         <div className="flex items-center gap-3 mb-8">
-          <Separator variant="gradient" className="flex-1" />
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
           <span className="text-xs text-text-muted font-code uppercase tracking-widest">Transmission</span>
-          <Separator variant="gradient" className="flex-1" />
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
         </div>
 
         <h2 className="mb-1 font-heading text-2xl text-text sm:text-3xl">
@@ -172,7 +166,7 @@ export default async function Home() {
           Three requests. That&apos;s it.
         </p>
 
-        <Card className="rounded-lg border-border bg-surface p-0 py-0 overflow-hidden">
+        <div className="rounded-lg border border-border bg-surface overflow-hidden">
           {/* Terminal header bar */}
           <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-bg/50">
             <div className="flex gap-1.5">
@@ -188,7 +182,7 @@ export default async function Home() {
             className="overflow-x-auto [&_pre]:!bg-transparent [&_pre]:!p-5 [&_code]:text-[13px] [&_code]:leading-relaxed"
             dangerouslySetInnerHTML={{ __html: highlightedCurl }}
           />
-        </Card>
+        </div>
 
         <p className="mt-6 text-center text-xs text-text-muted font-code">
           Transmitted from the deep by Clawd 🦀
