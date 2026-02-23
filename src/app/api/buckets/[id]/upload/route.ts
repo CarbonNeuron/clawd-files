@@ -10,6 +10,15 @@ import { eq, and } from "drizzle-orm";
 
 export const runtime = 'nodejs';
 
+// Override MIME types that the `mime-types` library gets wrong.
+// Notably, .ts is detected as video/mp2t (MPEG-2 Transport Stream).
+const MIME_OVERRIDES: Record<string, string> = {
+  ".ts": "text/typescript",
+  ".tsx": "text/typescript-jsx",
+  ".mts": "text/typescript",
+  ".cts": "text/typescript",
+};
+
 const GENERIC_FIELD_NAMES = new Set(["file", "files", "upload", "uploads", "blob"]);
 
 function sanitizePath(raw: string): string {
@@ -83,7 +92,8 @@ export async function POST(
       }
 
       const buffer = Buffer.from(await value.arrayBuffer());
-      const mimeType = lookup(filePath) || "application/octet-stream";
+      const ext = "." + filePath.split(".").pop()?.toLowerCase();
+      const mimeType = MIME_OVERRIDES[ext] ?? (lookup(filePath) || "application/octet-stream");
 
       await saveFile(id, filePath, buffer);
 

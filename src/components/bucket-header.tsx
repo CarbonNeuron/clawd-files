@@ -31,12 +31,21 @@ export function BucketHeader({
   const remaining = secondsRemaining(expiresAt);
 
   return (
-    <div className="space-y-4 py-8">
-      <h1 className="font-heading text-4xl tracking-tight text-text sm:text-5xl">
+    <div className="py-8 space-y-5">
+      {/* Station-style section divider */}
+      <div className="flex items-center gap-3">
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent/60" />
+        <span className="text-xs text-text-muted font-code uppercase tracking-widest">Bucket</span>
+        <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+      </div>
+
+      <h1 className="font-heading text-3xl tracking-tight text-text sm:text-4xl"
+        style={{ textShadow: "0 0 40px rgba(34, 211, 238, 0.08)" }}
+      >
         {name}
       </h1>
 
-      <p className="text-text-muted">
+      <p className="text-sm text-text-muted font-code">
         by <span className="text-text">{owner}</span>
         {forField && (
           <>
@@ -46,24 +55,25 @@ export function BucketHeader({
         )}
       </p>
 
+      {/* Metadata badges */}
       <div className="flex flex-wrap items-center gap-2">
         {expiresAt === null ? (
-          <Badge className="bg-emerald-900/50 text-emerald-400 border-emerald-800">
+          <Badge className="bg-emerald-900/40 text-emerald-400 border-emerald-800/50 text-xs font-code">
             Permanent
           </Badge>
         ) : (
-          <Badge className="bg-orange-900/50 text-accent-warm border-orange-800">
+          <Badge className="bg-accent-warm/10 text-accent-warm border-accent-warm/20 text-xs font-code">
             {remaining !== null ? formatTimeRemaining(remaining) : "Expired"}
           </Badge>
         )}
 
-        <Badge variant="secondary">
+        <Badge className="bg-surface text-text-muted border-border text-xs font-code">
           {fileCount} {fileCount === 1 ? "file" : "files"}
         </Badge>
       </div>
 
-      <div className="pt-2">
-        <Button asChild size="sm" variant="outline">
+      <div>
+        <Button asChild size="sm" variant="outline" className="glow-cyan-hover">
           <a href={`/api/buckets/${id}/zip`}>
             <Download className="size-4" />
             Download ZIP

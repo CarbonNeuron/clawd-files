@@ -96,10 +96,18 @@ export default async function AdminPage({
       <div className="py-12 sm:py-16">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="font-heading text-4xl text-text sm:text-5xl">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-warm/60" />
+            <span className="text-xs text-text-muted font-code uppercase tracking-widest">Admin</span>
+            <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+          </div>
+
+          <h1 className="font-heading text-3xl text-text sm:text-4xl"
+            style={{ textShadow: "0 0 40px rgba(34, 211, 238, 0.08)" }}
+          >
             Admin Dashboard
           </h1>
-          <p className="mt-2 text-sm text-text-muted">
+          <p className="mt-2 text-sm text-text-muted font-code">
             System overview and management for Clawd Files.
           </p>
         </div>
@@ -114,16 +122,22 @@ export default async function AdminPage({
 
         {/* API Keys */}
         <section className="mt-12">
-          <h2 className="mb-4 font-heading text-2xl text-text">API Keys</h2>
-          <div className="rounded-lg border border-border bg-surface p-4">
+          <div className="flex items-center gap-3 mb-4">
+            <h2 className="font-heading text-xl text-text">API Keys</h2>
+            <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+          </div>
+          <div className="rounded-lg border border-border bg-surface/50 p-4 overflow-hidden">
             <KeysTable keys={keyRows} token={token} />
           </div>
         </section>
 
         {/* Buckets */}
         <section className="mt-12">
-          <h2 className="mb-4 font-heading text-2xl text-text">Buckets</h2>
-          <div className="rounded-lg border border-border bg-surface p-4">
+          <div className="flex items-center gap-3 mb-4">
+            <h2 className="font-heading text-xl text-text">Buckets</h2>
+            <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+          </div>
+          <div className="rounded-lg border border-border bg-surface/50 p-4 overflow-hidden">
             <BucketsTable buckets={bucketRows} token={token} />
           </div>
         </section>

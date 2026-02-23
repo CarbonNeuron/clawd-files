@@ -129,11 +129,18 @@ export default async function BucketPage({
       />
 
       {readmeContent && (
-        <div className="mt-8 rounded-lg border border-border p-6">
-          <h2 className="font-heading text-lg text-text-muted mb-4">
-            README.md
-          </h2>
-          <MarkdownRenderer source={readmeContent} />
+        <div className="mt-8 rounded-lg border border-border overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-bg/30">
+            <div className="flex gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-accent-warm/50" />
+              <span className="w-2 h-2 rounded-full bg-accent/25" />
+              <span className="w-2 h-2 rounded-full bg-border" />
+            </div>
+            <span className="ml-1 text-[11px] text-text-muted/60 font-code">README.md</span>
+          </div>
+          <div className="p-6">
+            <MarkdownRenderer source={readmeContent} />
+          </div>
         </div>
       )}
     </PageShell>

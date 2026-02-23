@@ -1,5 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
-
 type StatsCardsProps = {
   buckets: number;
   files: number;
@@ -16,24 +14,25 @@ function formatStorage(bytes: number): string {
 }
 
 const STATS_CONFIG = [
-  { key: "buckets" as const, label: "Buckets" },
-  { key: "files" as const, label: "Files" },
-  { key: "storageBytes" as const, label: "Storage", format: formatStorage },
-  { key: "apiKeys" as const, label: "API Keys" },
+  { key: "buckets" as const, label: "Buckets", glyph: "◆" },
+  { key: "files" as const, label: "Files", glyph: "▸" },
+  { key: "storageBytes" as const, label: "Storage", format: formatStorage, glyph: "◇" },
+  { key: "apiKeys" as const, label: "API Keys", glyph: "▪" },
 ];
 
 export function StatsCards(props: StatsCardsProps) {
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-      {STATS_CONFIG.map(({ key, label, format }) => (
-        <Card key={key} className="border-border bg-surface">
-          <CardContent className="pt-0">
-            <p className="font-heading text-3xl text-text">
-              {format ? format(props[key]) : props[key].toLocaleString()}
-            </p>
-            <p className="mt-1 text-sm text-text-muted">{label}</p>
-          </CardContent>
-        </Card>
+      {STATS_CONFIG.map(({ key, label, format, glyph }) => (
+        <div key={key} className="rounded-lg border border-border bg-surface/80 p-5 glow-cyan-hover transition-all">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-accent/50 text-xs">{glyph}</span>
+            <p className="text-xs text-text-muted font-code uppercase tracking-wider">{label}</p>
+          </div>
+          <p className="font-heading text-3xl text-text">
+            {format ? format(props[key]) : props[key].toLocaleString()}
+          </p>
+        </div>
       ))}
     </div>
   );

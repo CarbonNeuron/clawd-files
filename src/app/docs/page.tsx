@@ -30,14 +30,23 @@ const AUTH_STYLES: Record<AuthLevel, { label: string; className: string }> = {
 
 /* ── Highlighted code block ───────────────────────────────────────────── */
 
-function HighlightedBlock({ html }: { html: string }) {
-  // Shiki HTML is generated server-side from static code strings
-  // defined in api-docs.ts — not user input. Safe to render.
+function HighlightedBlock({ html, label }: { html: string; label?: string }) {
+  // SECURITY: Shiki HTML is generated server-side from static code strings
+  // defined in api-docs.ts — not user input. Shiki escapes all content
+  // and produces only safe <pre>/<code>/<span> elements with style attrs.
   return (
-    <div
-      className="overflow-x-auto rounded-md border border-border bg-surface [&_pre]:!bg-transparent [&_pre]:!p-4 [&_code]:text-[13px] [&_code]:leading-relaxed"
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    <div className="overflow-hidden rounded-md border border-border bg-surface/50">
+      {label && (
+        <div className="flex items-center gap-2 px-3 py-1.5 border-b border-border bg-bg/30">
+          <span className="text-[10px] text-text-muted/50 font-code">{label}</span>
+        </div>
+      )}
+      {/* Safe Shiki output — see security comment above */}
+      <div
+        className="overflow-x-auto [&_pre]:!bg-transparent [&_pre]:!p-4 [&_code]:text-[13px] [&_code]:leading-relaxed"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+    </div>
   );
 }
 
@@ -86,27 +95,18 @@ async function EndpointSection({ endpoint }: { endpoint: Endpoint }) {
       {/* Request Body */}
       {requestHtml && (
         <div className="mt-4">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-text-muted">
-            Request Body
-          </p>
-          <HighlightedBlock html={requestHtml} />
+          <HighlightedBlock html={requestHtml} label="Request Body" />
         </div>
       )}
 
       {/* Response */}
       <div className="mt-4">
-        <p className="mb-2 text-xs font-medium uppercase tracking-wider text-text-muted">
-          Response
-        </p>
-        <HighlightedBlock html={responseHtml} />
+        <HighlightedBlock html={responseHtml} label="Response" />
       </div>
 
       {/* Curl */}
       <div className="mt-4">
-        <p className="mb-2 text-xs font-medium uppercase tracking-wider text-text-muted">
-          Example
-        </p>
-        <HighlightedBlock html={curlHtml} />
+        <HighlightedBlock html={curlHtml} label="Example" />
       </div>
     </div>
   );
@@ -193,10 +193,18 @@ export default async function DocsPage() {
       <div className="py-12 sm:py-16">
         {/* Header */}
         <div className="mb-10">
-          <h1 className="font-heading text-4xl text-text sm:text-5xl">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent/60" />
+            <span className="text-xs text-text-muted font-code uppercase tracking-widest">Documentation</span>
+            <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+          </div>
+
+          <h1 className="font-heading text-3xl text-text sm:text-4xl"
+            style={{ textShadow: "0 0 40px rgba(34, 211, 238, 0.08)" }}
+          >
             API Documentation
           </h1>
-          <p className="mt-2 text-sm text-text-muted">
+          <p className="mt-2 text-sm text-text-muted font-code">
             Complete reference for the Clawd Files REST API. All responses are JSON with{" "}
             <code className="rounded bg-surface px-1.5 py-0.5 font-code text-xs text-accent">
               {"{ ok, data }"}
@@ -205,32 +213,36 @@ export default async function DocsPage() {
           </p>
 
           {/* Auth overview */}
-          <div className="mt-6 rounded-lg border border-border bg-surface p-4">
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider text-text-muted">
-              Authentication
-            </p>
-            <p className="text-sm text-text-muted">
-              Pass your API key via the{" "}
-              <code className="rounded bg-bg px-1.5 py-0.5 font-code text-xs text-accent">
-                Authorization
-              </code>{" "}
-              header:
-            </p>
-            <pre className="mt-2 rounded-md bg-bg px-3 py-2 font-code text-xs text-text">
-              Authorization: Bearer cf_your_api_key
-            </pre>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {(Object.entries(AUTH_STYLES) as [AuthLevel, { label: string; className: string }][]).map(
-                ([key, info]) => (
-                  <Badge
-                    key={key}
-                    variant="outline"
-                    className={`rounded-md border text-[10px] ${info.className}`}
-                  >
-                    {info.label}
-                  </Badge>
-                )
-              )}
+          <div className="mt-6 rounded-lg border border-border bg-surface/50 overflow-hidden">
+            <div className="px-4 py-2 border-b border-border bg-bg/30">
+              <p className="text-[10px] font-code uppercase tracking-widest text-text-muted/60">
+                Authentication
+              </p>
+            </div>
+            <div className="p-4">
+              <p className="text-sm text-text-muted">
+                Pass your API key via the{" "}
+                <code className="rounded bg-bg px-1.5 py-0.5 font-code text-xs text-accent">
+                  Authorization
+                </code>{" "}
+                header:
+              </p>
+              <pre className="mt-2 rounded-md bg-bg/50 border border-border px-3 py-2 font-code text-xs text-text">
+                Authorization: Bearer cf_your_api_key
+              </pre>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(Object.entries(AUTH_STYLES) as [AuthLevel, { label: string; className: string }][]).map(
+                  ([key, info]) => (
+                    <Badge
+                      key={key}
+                      variant="outline"
+                      className={`rounded-md border text-[10px] ${info.className}`}
+                    >
+                      {info.label}
+                    </Badge>
+                  )
+                )}
+              </div>
             </div>
           </div>
         </div>

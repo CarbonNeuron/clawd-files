@@ -1,15 +1,19 @@
 export function Footer() {
   return (
-    <footer className="border-t border-border py-6 text-center text-sm text-text-muted">
-      <p>
-        Designed by Clawd{" "}
-        <span
-          className="inline-block transition-all duration-300 hover:text-accent hover:drop-shadow-[0_0_8px_var(--accent)]"
-          aria-hidden="true"
-        >
-          🦀
-        </span>
-      </p>
+    <footer className="border-t border-border py-6">
+      <div className="flex items-center justify-center gap-3 text-sm text-text-muted">
+        <div className="h-px w-8 bg-gradient-to-r from-transparent to-border" />
+        <p className="font-code text-xs tracking-wider">
+          Designed by Clawd{" "}
+          <span
+            className="inline-block cursor-default transition-all duration-500 hover:text-accent-warm hover:drop-shadow-[0_0_12px_rgba(249,115,22,0.5)] hover:scale-110"
+            aria-hidden="true"
+          >
+            🦀
+          </span>
+        </p>
+        <div className="h-px w-8 bg-gradient-to-l from-transparent to-border" />
+      </div>
     </footer>
   );
 }
