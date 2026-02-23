@@ -1,15 +1,4 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { secondsRemaining } from "@/lib/expiry";
 import { Download, ExternalLink } from "lucide-react";
 
@@ -59,34 +48,30 @@ function FileBreadcrumbs({
   const folderSegments = segments.slice(0, -1);
 
   return (
-    <Breadcrumb className="overflow-x-auto font-code">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild className="text-accent hover:text-accent/80">
-            <Link href={`/${bucketId}`}>{bucketName}</Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
+    <nav aria-label="Breadcrumb" className="overflow-x-auto font-code">
+      <ol className="flex items-center gap-1.5 text-sm">
+        <li>
+          <Link href={`/${bucketId}`} className="text-accent hover:text-accent/80">
+            {bucketName}
+          </Link>
+        </li>
         {folderSegments.map((segment, i) => {
           const path = folderSegments.slice(0, i + 1).join("/") + "/";
           return (
-            <span key={path} className="contents">
-              <BreadcrumbSeparator className="text-text-muted/50" />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild className="text-accent hover:text-accent/80">
-                  <Link href={`/${bucketId}?path=${encodeURIComponent(path)}`}>
-                    {segment}
-                  </Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </span>
+            <li key={path} className="flex items-center gap-1.5">
+              <span className="text-text-muted/50">/</span>
+              <Link href={`/${bucketId}?path=${encodeURIComponent(path)}`} className="text-accent hover:text-accent/80">
+                {segment}
+              </Link>
+            </li>
           );
         })}
-        <BreadcrumbSeparator className="text-text-muted/50" />
-        <BreadcrumbItem>
-          <BreadcrumbPage className="text-text">{fileName}</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
+        <li className="flex items-center gap-1.5">
+          <span className="text-text-muted/50">/</span>
+          <span className="text-text" aria-current="page">{fileName}</span>
+        </li>
+      </ol>
+    </nav>
   );
 }
 
@@ -124,53 +109,49 @@ export function FilePreview({
           {fileName}
         </h1>
         {ext && (
-          <Badge variant="outline" className="rounded px-2 py-0.5 text-[11px] font-code font-medium bg-accent-warm/10 text-accent-warm border-accent-warm/20">
+          <span className="inline-flex items-center rounded border px-2 py-0.5 text-[11px] font-code font-medium bg-accent-warm/10 text-accent-warm border-accent-warm/20">
             {ext}
-          </Badge>
+          </span>
         )}
       </div>
 
       {/* ── Metadata bar ── */}
-      <Card className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border-border bg-surface/50 px-4 py-3">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-border bg-surface/50 px-4 py-3">
         <span className="text-xs font-code text-text-muted">{mimeType}</span>
         <span className="text-border">·</span>
         <span className="text-xs font-code text-text-muted">{formatSize(size)}</span>
         <span className="text-border">·</span>
         {expiresAt === null ? (
-          <Badge className="bg-emerald-900/40 text-emerald-400 border-emerald-800/50 text-[10px] font-code px-1.5 py-0">
+          <span className="inline-flex items-center text-[10px] px-1.5 py-0 rounded border bg-emerald-900/40 text-emerald-400 border-emerald-800/50 font-code">
             Permanent
-          </Badge>
+          </span>
         ) : (
-          <Badge className="bg-accent-warm/10 text-accent-warm border-accent-warm/20 text-[10px] font-code px-1.5 py-0">
+          <span className="inline-flex items-center text-[10px] px-1.5 py-0 rounded border bg-accent-warm/10 text-accent-warm border-accent-warm/20 font-code">
             {remaining !== null
               ? formatTimeRemaining(remaining)
               : "Expired"}
-          </Badge>
+          </span>
         )}
 
         {/* Actions pushed right */}
         <div className="ml-auto flex items-center gap-2">
-          <Button asChild size="xs" variant="outline" className="glow-cyan-hover">
-            <a href={rawUrl} download>
-              <Download className="size-3" />
-              Download
-            </a>
-          </Button>
-          <Button asChild size="xs" variant="outline">
-            <a href={rawUrl} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="size-3" />
-              Raw
-            </a>
-          </Button>
+          <a href={rawUrl} download className="btn btn-outline btn-xs glow-cyan-hover">
+            <Download className="size-3" />
+            Download
+          </a>
+          <a href={rawUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-xs">
+            <ExternalLink className="size-3" />
+            Raw
+          </a>
         </div>
-      </Card>
+      </div>
 
       {/* Curl command */}
-      <Card className="rounded-lg border-border bg-bg/50 px-4 py-2.5">
+      <div className="rounded-lg border border-border bg-bg/50 px-4 py-2.5">
         <code className="text-xs font-code text-text-muted/80 break-all select-all">
           {curlCommand}
         </code>
-      </Card>
+      </div>
 
       {/* ── Preview content ── */}
       <div>{children}</div>
