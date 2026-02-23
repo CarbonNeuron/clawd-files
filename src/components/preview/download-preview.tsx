@@ -1,5 +1,3 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Download, FileIcon } from "lucide-react";
 import { basename } from "node:path";
 
@@ -27,7 +25,7 @@ export function DownloadPreview({
   const fileName = basename(filePath);
 
   return (
-    <Card className="flex flex-col items-center justify-center rounded-lg border-border bg-surface/50 py-16 px-8 text-center">
+    <div className="flex flex-col items-center justify-center rounded-lg border border-border bg-surface/50 py-16 px-8 text-center">
       <div className="relative mb-6">
         <FileIcon className="size-16 text-text-muted/40" />
         <div className="absolute inset-0 blur-xl bg-accent/5 rounded-full" />
@@ -35,12 +33,10 @@ export function DownloadPreview({
       <h2 className="font-heading text-xl text-text mb-2">{fileName}</h2>
       <p className="text-xs text-text-muted font-code mb-1">{mimeType}</p>
       <p className="text-xs text-text-muted font-code mb-8">{formatSize(size)}</p>
-      <Button asChild size="lg" className="glow-cyan-hover">
-        <a href={`/raw/${bucketId}/${filePath}`} download>
-          <Download className="size-4" />
-          Download File
-        </a>
-      </Button>
-    </Card>
+      <a href={`/raw/${bucketId}/${filePath}`} download className="btn btn-primary btn-lg glow-cyan-hover">
+        <Download className="size-4" />
+        Download File
+      </a>
+    </div>
   );
 }

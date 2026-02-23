@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { highlight, extToLang } from "@/lib/highlight";
 import { extname } from "node:path";
 
@@ -21,7 +20,7 @@ export async function CodePreview({ content, filePath }: CodePreviewProps) {
   const highlightedHtml = await highlight(content, lang);
 
   return (
-    <Card className="overflow-hidden rounded-lg border-border bg-surface/50 p-0 py-0">
+    <div className="overflow-hidden rounded-lg border border-border bg-surface/50">
       {/* Terminal-style header */}
       <div className="flex items-center gap-2 px-4 py-2 border-b border-border bg-bg/30">
         <div className="flex gap-1.5">
@@ -37,6 +36,6 @@ export async function CodePreview({ content, filePath }: CodePreviewProps) {
         className="shiki-wrapper overflow-x-auto text-sm [&_pre]:!p-4 [&_pre]:!m-0 [&_pre]:!bg-transparent [&_code]:font-code [&_.line]:before:content-[counter(line)] [&_.line]:before:counter-increment-[line] [&_code]:counter-reset-[line] [&_.line]:before:mr-6 [&_.line]:before:inline-block [&_.line]:before:w-4 [&_.line]:before:text-right [&_.line]:before:text-text-muted/30"
         dangerouslySetInnerHTML={{ __html: highlightedHtml }}
       />
-    </Card>
+    </div>
   );
 }
