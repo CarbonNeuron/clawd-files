@@ -1,8 +1,17 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { secondsRemaining } from "@/lib/expiry";
-import { Download, ExternalLink, ChevronRight } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 
 interface FilePreviewProps {
   bucketId: string;
@@ -50,32 +59,34 @@ function FileBreadcrumbs({
   const folderSegments = segments.slice(0, -1);
 
   return (
-    <nav className="flex items-center gap-1.5 text-sm text-text-muted overflow-x-auto font-code">
-      <Link
-        href={`/${bucketId}`}
-        className="text-accent hover:text-accent/80 shrink-0"
-      >
-        {bucketName}
-      </Link>
-      {folderSegments.map((segment, i) => {
-        const path = folderSegments.slice(0, i + 1).join("/") + "/";
-        return (
-          <span key={path} className="flex items-center gap-1.5">
-            <ChevronRight className="size-3 text-text-muted/50 shrink-0" />
-            <Link
-              href={`/${bucketId}?path=${encodeURIComponent(path)}`}
-              className="text-accent hover:text-accent/80"
-            >
-              {segment}
-            </Link>
-          </span>
-        );
-      })}
-      <span className="flex items-center gap-1.5">
-        <ChevronRight className="size-3 text-text-muted/50 shrink-0" />
-        <span className="text-text">{fileName}</span>
-      </span>
-    </nav>
+    <Breadcrumb className="overflow-x-auto font-code">
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild className="text-accent hover:text-accent/80">
+            <Link href={`/${bucketId}`}>{bucketName}</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        {folderSegments.map((segment, i) => {
+          const path = folderSegments.slice(0, i + 1).join("/") + "/";
+          return (
+            <span key={path} className="contents">
+              <BreadcrumbSeparator className="text-text-muted/50" />
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild className="text-accent hover:text-accent/80">
+                  <Link href={`/${bucketId}?path=${encodeURIComponent(path)}`}>
+                    {segment}
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            </span>
+          );
+        })}
+        <BreadcrumbSeparator className="text-text-muted/50" />
+        <BreadcrumbItem>
+          <BreadcrumbPage className="text-text">{fileName}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
   );
 }
 
@@ -113,14 +124,14 @@ export function FilePreview({
           {fileName}
         </h1>
         {ext && (
-          <span className="inline-flex items-center rounded px-2 py-0.5 text-[11px] font-code font-medium bg-accent-warm/10 text-accent-warm border border-accent-warm/20">
+          <Badge variant="outline" className="rounded px-2 py-0.5 text-[11px] font-code font-medium bg-accent-warm/10 text-accent-warm border-accent-warm/20">
             {ext}
-          </span>
+          </Badge>
         )}
       </div>
 
       {/* ── Metadata bar ── */}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-border bg-surface/50 px-4 py-3">
+      <Card className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border-border bg-surface/50 px-4 py-3">
         <span className="text-xs font-code text-text-muted">{mimeType}</span>
         <span className="text-border">·</span>
         <span className="text-xs font-code text-text-muted">{formatSize(size)}</span>
@@ -152,14 +163,14 @@ export function FilePreview({
             </a>
           </Button>
         </div>
-      </div>
+      </Card>
 
       {/* Curl command */}
-      <div className="rounded-lg border border-border bg-bg/50 px-4 py-2.5">
+      <Card className="rounded-lg border-border bg-bg/50 px-4 py-2.5">
         <code className="text-xs font-code text-text-muted/80 break-all select-all">
           {curlCommand}
         </code>
-      </div>
+      </Card>
 
       {/* ── Preview content ── */}
       <div>{children}</div>

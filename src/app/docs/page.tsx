@@ -1,5 +1,7 @@
 import { PageShell } from "@/components/page-shell";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { highlight } from "@/lib/highlight";
 import {
   API_DOCS,
@@ -35,18 +37,18 @@ function HighlightedBlock({ html, label }: { html: string; label?: string }) {
   // defined in api-docs.ts — not user input. Shiki escapes all content
   // and produces only safe <pre>/<code>/<span> elements with style attrs.
   return (
-    <div className="overflow-hidden rounded-md border border-border bg-surface/50">
+    <Card className="overflow-hidden rounded-md border-border bg-surface/50 p-0 py-0">
       {label && (
         <div className="flex items-center gap-2 px-3 py-1.5 border-b border-border bg-bg/30">
           <span className="text-[10px] text-text-muted/50 font-code">{label}</span>
         </div>
       )}
-      {/* Safe Shiki output — see security comment above */}
+      {/* SECURITY: Safe Shiki output — see security comment above */}
       <div
         className="overflow-x-auto [&_pre]:!bg-transparent [&_pre]:!p-4 [&_code]:text-[13px] [&_code]:leading-relaxed"
         dangerouslySetInnerHTML={{ __html: html }}
       />
-    </div>
+    </Card>
   );
 }
 
@@ -196,7 +198,7 @@ export default async function DocsPage() {
           <div className="flex items-center gap-3 mb-6">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent/60" />
             <span className="text-xs text-text-muted font-code uppercase tracking-widest">Documentation</span>
-            <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+            <Separator variant="gradientLeft" className="flex-1" />
           </div>
 
           <h1 className="font-heading text-3xl text-text sm:text-4xl"
@@ -213,13 +215,13 @@ export default async function DocsPage() {
           </p>
 
           {/* Auth overview */}
-          <div className="mt-6 rounded-lg border border-border bg-surface/50 overflow-hidden">
-            <div className="px-4 py-2 border-b border-border bg-bg/30">
+          <Card className="mt-6 rounded-lg border-border bg-surface/50 p-0 py-0 overflow-hidden">
+            <CardHeader className="px-4 py-2 border-b border-border bg-bg/30">
               <p className="text-[10px] font-code uppercase tracking-widest text-text-muted/60">
                 Authentication
               </p>
-            </div>
-            <div className="p-4">
+            </CardHeader>
+            <CardContent className="p-4">
               <p className="text-sm text-text-muted">
                 Pass your API key via the{" "}
                 <code className="rounded bg-bg px-1.5 py-0.5 font-code text-xs text-accent">
@@ -243,8 +245,8 @@ export default async function DocsPage() {
                   )
                 )}
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Layout: sidebar + content */}

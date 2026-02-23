@@ -7,7 +7,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Folder, FileText, ChevronRight } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Folder, FileText } from "lucide-react";
 
 interface FileEntry {
   path: string;
@@ -148,33 +158,35 @@ function Breadcrumbs({
     : [];
 
   return (
-    <nav className="flex items-center gap-1.5 text-sm text-text-muted py-3 overflow-x-auto font-code">
-      <Link
-        href={`/${bucketId}`}
-        className="text-accent hover:text-accent/80 shrink-0"
-      >
-        {bucketName}
-      </Link>
-      {segments.map((segment, i) => {
-        const path = segments.slice(0, i + 1).join("/") + "/";
-        const isLast = i === segments.length - 1;
-        return (
-          <span key={path} className="flex items-center gap-1.5">
-            <ChevronRight className="size-3 text-text-muted/50 shrink-0" />
-            {isLast ? (
-              <span className="text-text">{segment}</span>
-            ) : (
-              <Link
-                href={`/${bucketId}?path=${encodeURIComponent(path)}`}
-                className="text-accent hover:text-accent/80"
-              >
-                {segment}
-              </Link>
-            )}
-          </span>
-        );
-      })}
-    </nav>
+    <Breadcrumb className="py-3 overflow-x-auto font-code">
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild className="text-accent hover:text-accent/80">
+            <Link href={`/${bucketId}`}>{bucketName}</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        {segments.map((segment, i) => {
+          const path = segments.slice(0, i + 1).join("/") + "/";
+          const isLast = i === segments.length - 1;
+          return (
+            <span key={path} className="contents">
+              <BreadcrumbSeparator className="text-text-muted/50" />
+              <BreadcrumbItem>
+                {isLast ? (
+                  <BreadcrumbPage className="text-text">{segment}</BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink asChild className="text-accent hover:text-accent/80">
+                    <Link href={`/${bucketId}?path=${encodeURIComponent(path)}`}>
+                      {segment}
+                    </Link>
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+            </span>
+          );
+        })}
+      </BreadcrumbList>
+    </Breadcrumb>
   );
 }
 
@@ -194,7 +206,7 @@ export function FileTree({
         currentPath={currentPath}
       />
 
-      <div className="rounded-lg border border-border overflow-hidden bg-surface/50">
+      <Card className="rounded-lg border-border overflow-hidden bg-surface/50 p-0 py-0">
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent bg-bg/30">
@@ -248,9 +260,9 @@ export function FileTree({
                   </TableCell>
                   <TableCell className="text-right hidden sm:table-cell">
                     {!entry.isFolder && getExtBadge(entry.name) ? (
-                      <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-code font-medium bg-accent-warm/10 text-accent-warm border border-accent-warm/20">
+                      <Badge variant="outline" className="rounded px-1.5 py-0.5 text-[10px] font-code font-medium bg-accent-warm/10 text-accent-warm border-accent-warm/20">
                         {getExtBadge(entry.name)}
-                      </span>
+                      </Badge>
                     ) : entry.isFolder ? (
                       <span className="text-xs text-text-muted/50 font-code">dir</span>
                     ) : null}
@@ -266,7 +278,7 @@ export function FileTree({
             )}
           </TableBody>
         </Table>
-      </div>
+      </Card>
     </div>
   );
 }

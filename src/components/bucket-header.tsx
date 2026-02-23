@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { secondsRemaining } from "@/lib/expiry";
 import { Download } from "lucide-react";
 
@@ -36,7 +37,7 @@ export function BucketHeader({
       <div className="flex items-center gap-3">
         <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent/60" />
         <span className="text-xs text-text-muted font-code uppercase tracking-widest">Bucket</span>
-        <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+        <Separator variant="gradientLeft" className="flex-1" />
       </div>
 
       <h1 className="font-heading text-3xl tracking-tight text-text sm:text-4xl"

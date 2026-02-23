@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -69,7 +70,7 @@ export function CsvPreview({ content }: CsvPreviewProps) {
 
   return (
     <div>
-      <div className="overflow-x-auto rounded-lg border border-border">
+      <Card className="overflow-x-auto rounded-lg border-border p-0 py-0">
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">
@@ -106,7 +107,7 @@ export function CsvPreview({ content }: CsvPreviewProps) {
             ))}
           </TableBody>
         </Table>
-      </div>
+      </Card>
 
       {isTruncated && (
         <p className="mt-3 text-sm text-text-muted">

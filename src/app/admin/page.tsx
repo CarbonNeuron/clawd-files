@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { apiKeys, buckets, files } from "@/lib/schema";
 import { count, sum, eq } from "drizzle-orm";
 import { PageShell } from "@/components/page-shell";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { StatsCards } from "@/components/admin/stats-cards";
 import { KeysTable, type KeyRow } from "@/components/admin/keys-table";
 import { BucketsTable, type BucketRow } from "@/components/admin/buckets-table";
@@ -26,9 +28,11 @@ export default async function AdminPage({
           <p className="mt-4 max-w-lg text-center text-sm text-text-muted">
             Dashboard tokens expire after 24 hours. Generate a new link:
           </p>
-          <pre className="mt-4 rounded-lg border border-border bg-surface px-4 py-3 font-code text-sm text-accent">
-            {`curl -H 'Authorization: Bearer $ADMIN_API_KEY' \\\n  $BASE_URL/api/admin/dashboard-link`}
-          </pre>
+          <Card className="mt-4 rounded-lg border-border bg-surface px-4 py-3">
+            <code className="font-code text-sm text-accent whitespace-pre">
+              {`curl -H 'Authorization: Bearer $ADMIN_API_KEY' \\\n  $BASE_URL/api/admin/dashboard-link`}
+            </code>
+          </Card>
           <Link
             href="/"
             className="mt-6 text-sm text-text-muted transition-colors hover:text-text"
@@ -99,7 +103,7 @@ export default async function AdminPage({
           <div className="flex items-center gap-3 mb-6">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent-warm/60" />
             <span className="text-xs text-text-muted font-code uppercase tracking-widest">Admin</span>
-            <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+            <Separator variant="gradientLeft" className="flex-1" />
           </div>
 
           <h1 className="font-heading text-3xl text-text sm:text-4xl"
@@ -124,22 +128,22 @@ export default async function AdminPage({
         <section className="mt-12">
           <div className="flex items-center gap-3 mb-4">
             <h2 className="font-heading text-xl text-text">API Keys</h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+            <Separator variant="gradientLeft" className="flex-1" />
           </div>
-          <div className="rounded-lg border border-border bg-surface/50 p-4 overflow-hidden">
+          <Card className="rounded-lg border-border bg-surface/50 p-4 py-4 overflow-hidden">
             <KeysTable keys={keyRows} token={token} />
-          </div>
+          </Card>
         </section>
 
         {/* Buckets */}
         <section className="mt-12">
           <div className="flex items-center gap-3 mb-4">
             <h2 className="font-heading text-xl text-text">Buckets</h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+            <Separator variant="gradientLeft" className="flex-1" />
           </div>
-          <div className="rounded-lg border border-border bg-surface/50 p-4 overflow-hidden">
+          <Card className="rounded-lg border-border bg-surface/50 p-4 py-4 overflow-hidden">
             <BucketsTable buckets={bucketRows} token={token} />
-          </div>
+          </Card>
         </section>
       </div>
     </PageShell>

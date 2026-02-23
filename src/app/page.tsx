@@ -1,4 +1,7 @@
 import { PageShell } from "@/components/page-shell";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { highlight } from "@/lib/highlight";
 import Link from "next/link";
 
@@ -52,8 +55,9 @@ curl -X POST http://localhost:3000/api/buckets/abc123/upload \\
 
 export default async function Home() {
   // Shiki highlight is async; safe to call in server components.
-  // The HTML output is from a trusted source (Shiki) operating on
-  // static code strings defined above, not user input.
+  // SECURITY: The HTML output is from Shiki operating on static code strings
+  // defined above, not user input. Shiki escapes all content and produces
+  // only safe <pre>/<code>/<span> elements with style attributes.
   const highlightedCurl = await highlight(CURL_EXAMPLE, "bash");
 
   return (
@@ -97,20 +101,20 @@ export default async function Home() {
         </p>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/docs"
-            className="glow-cyan-hover inline-flex h-10 items-center rounded-md bg-accent px-6 text-sm font-medium text-bg transition-all hover:bg-accent/90 hover:text-bg"
-          >
-            View API Docs
-          </Link>
-          <a
-            href="https://github.com/nichochar/clawd-files"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex h-10 items-center rounded-md border border-border bg-surface px-6 text-sm font-medium text-text transition-all hover:bg-surface-hover hover:border-accent/30 hover:text-text"
-          >
-            GitHub
-          </a>
+          <Button asChild className="glow-cyan-hover bg-accent text-bg hover:bg-accent/90 hover:text-bg">
+            <Link href="/docs">
+              View API Docs
+            </Link>
+          </Button>
+          <Button asChild variant="outline" className="border-border bg-surface text-text hover:bg-surface-hover hover:border-accent/30 hover:text-text">
+            <a
+              href="https://github.com/nichochar/clawd-files"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+          </Button>
         </div>
 
         {/* Decorative depth marker */}
@@ -122,16 +126,16 @@ export default async function Home() {
       {/* ── Feature Cards ─────────────────────────────────────── */}
       <section className="pb-20 sm:pb-24">
         <div className="flex items-center gap-3 mb-8">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+          <Separator variant="gradient" className="flex-1" />
           <span className="text-xs text-text-muted font-code uppercase tracking-widest">Systems</span>
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+          <Separator variant="gradient" className="flex-1" />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           {FEATURES.map((feature) => (
-            <div
+            <Card
               key={feature.title}
-              className="group relative rounded-lg border border-border bg-surface/80 p-6 transition-all duration-300 hover:border-accent/30 hover:bg-surface glow-cyan-hover"
+              className="group relative rounded-lg border-border bg-surface/80 p-6 py-6 transition-all duration-300 hover:border-accent/30 hover:bg-surface glow-cyan-hover"
             >
               {/* Corner accent */}
               <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-accent/20 rounded-tr-lg pointer-events-none" />
@@ -148,7 +152,7 @@ export default async function Home() {
               <p className="mt-2 text-sm leading-relaxed text-text-muted">
                 {feature.description}
               </p>
-            </div>
+            </Card>
           ))}
         </div>
       </section>
@@ -156,9 +160,9 @@ export default async function Home() {
       {/* ── Code Example ──────────────────────────────────────── */}
       <section className="pb-24 sm:pb-32">
         <div className="flex items-center gap-3 mb-8">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+          <Separator variant="gradient" className="flex-1" />
           <span className="text-xs text-text-muted font-code uppercase tracking-widest">Transmission</span>
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-transparent" />
+          <Separator variant="gradient" className="flex-1" />
         </div>
 
         <h2 className="mb-1 font-heading text-2xl text-text sm:text-3xl">
@@ -168,7 +172,7 @@ export default async function Home() {
           Three requests. That&apos;s it.
         </p>
 
-        <div className="relative rounded-lg border border-border bg-surface overflow-hidden">
+        <Card className="rounded-lg border-border bg-surface p-0 py-0 overflow-hidden">
           {/* Terminal header bar */}
           <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-bg/50">
             <div className="flex gap-1.5">
@@ -179,12 +183,12 @@ export default async function Home() {
             <span className="ml-2 text-xs text-text-muted font-code">terminal — bash</span>
           </div>
 
-          {/* Shiki-highlighted code from trusted static strings (not user input) */}
+          {/* SECURITY: Shiki-highlighted code from trusted static strings (not user input) */}
           <div
             className="overflow-x-auto [&_pre]:!bg-transparent [&_pre]:!p-5 [&_code]:text-[13px] [&_code]:leading-relaxed"
             dangerouslySetInnerHTML={{ __html: highlightedCurl }}
           />
-        </div>
+        </Card>
 
         <p className="mt-6 text-center text-xs text-text-muted font-code">
           Transmitted from the deep by Clawd 🦀
