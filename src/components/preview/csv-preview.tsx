@@ -1,15 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Card } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 interface CsvPreviewProps {
   content: string;
@@ -70,14 +61,14 @@ export function CsvPreview({ content }: CsvPreviewProps) {
 
   return (
     <div>
-      <Card className="overflow-x-auto rounded-lg border-border p-0 py-0">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-border hover:bg-transparent">
+      <div className="overflow-x-auto rounded-lg border border-border">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-border bg-bg/30">
               {headers.map((header, i) => (
-                <TableHead
+                <th
                   key={i}
-                  className="text-text-muted cursor-pointer select-none hover:text-text"
+                  className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2 cursor-pointer select-none hover:text-text"
                   onClick={() => handleSort(i)}
                 >
                   <span className="flex items-center gap-1">
@@ -88,26 +79,26 @@ export function CsvPreview({ content }: CsvPreviewProps) {
                       </span>
                     )}
                   </span>
-                </TableHead>
+                </th>
               ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+            </tr>
+          </thead>
+          <tbody>
             {displayRows.map((row, rowIndex) => (
-              <TableRow
+              <tr
                 key={rowIndex}
-                className="border-border hover:bg-surface-hover"
+                className="border-b border-border hover:bg-surface-hover transition-colors"
               >
                 {headers.map((_, colIndex) => (
-                  <TableCell key={colIndex} className="text-text">
+                  <td key={colIndex} className="px-4 py-2 text-text">
                     {row[colIndex] || ""}
-                  </TableCell>
+                  </td>
                 ))}
-              </TableRow>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
-      </Card>
+          </tbody>
+        </table>
+      </div>
 
       {isTruncated && (
         <p className="mt-3 text-sm text-text-muted">
