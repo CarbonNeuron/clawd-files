@@ -12,7 +12,7 @@ export function VideoPreview({ bucketId, filePath }: VideoPreviewProps) {
         controls
         preload="metadata"
         src={`/raw/${bucketId}/${encodePath(filePath)}`}
-        className="max-w-full rounded"
+        className="max-w-full max-h-[80vh] rounded"
       />
     </div>
   );
