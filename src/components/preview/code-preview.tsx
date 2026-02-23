@@ -33,7 +33,7 @@ export async function CodePreview({ content, filePath }: CodePreviewProps) {
 
       {/* SECURITY: HTML from Shiki engine — escapes all input, produces safe spans */}
       <div
-        className="shiki-wrapper overflow-x-auto text-sm [&_pre]:!p-4 [&_pre]:!m-0 [&_pre]:!bg-transparent [&_code]:font-code [&_.line]:before:content-[counter(line)] [&_.line]:before:counter-increment-[line] [&_code]:counter-reset-[line] [&_.line]:before:mr-6 [&_.line]:before:inline-block [&_.line]:before:w-4 [&_.line]:before:text-right [&_.line]:before:text-text-muted/30"
+        className="shiki-wrapper overflow-x-auto text-sm [&_pre]:!p-4 [&_pre]:!m-0 [&_pre]:!bg-transparent [&_code]:font-code"
         dangerouslySetInnerHTML={{ __html: highlightedHtml }}
       />
     </div>
