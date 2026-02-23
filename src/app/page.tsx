@@ -99,7 +99,7 @@ export default async function Home() {
           </Link>
           <a
               className="btn btn-outline"
-              href="https://github.com/nichochar/clawd-files"
+              href="https://github.com/CarbonNeuron/clawd-files"
               target="_blank"
               rel="noopener noreferrer"
             >
