@@ -19,12 +19,12 @@
   --accent: #22d3ee;
   --accent-warm: #f97316;
   --text: #e2e8f0;
-  --text-muted: #64748b;
+  --text-muted: #94a3b8;
 
-  /* System font stacks — no external font loads */
-  --font-heading: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-body: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
-  --font-code: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+  /* Google Fonts stacks with emoji fallback */
+  --font-heading: var(--font-roboto), var(--font-noto-emoji), sans-serif;
+  --font-body: var(--font-roboto), var(--font-noto-emoji), sans-serif;
+  --font-code: var(--font-jetbrains-mono), var(--font-noto-emoji), monospace;
 
   /* shadcn/ui overrides — Abyssal Terminal dark palette */
   --radius: 0.625rem;
@@ -39,7 +39,7 @@
   --secondary: #111d2c;
   --secondary-foreground: #e2e8f0;
   --muted: #1a2d40;
-  --muted-foreground: #64748b;
+  --muted-foreground: #94a3b8;
   --accent-foreground: #06090f;
   --destructive: #ef4444;
   --destructive-foreground: #e2e8f0;
@@ -47,7 +47,7 @@
   --ring: #22d3ee;
   --chart-1: #22d3ee;
   --chart-2: #f97316;
-  --chart-3: #64748b;
+  --chart-3: #94a3b8;
   --chart-4: #38bdf8;
   --chart-5: #a78bfa;
   --sidebar: #0d1520;
