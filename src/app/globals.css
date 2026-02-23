@@ -14,10 +14,10 @@
   --text: #e2e8f0;
   --text-muted: #94a3b8;
 
-  /* Google Fonts stacks with emoji fallback */
-  --font-heading: var(--font-roboto), var(--font-noto-emoji), sans-serif;
-  --font-body: var(--font-roboto), var(--font-noto-emoji), sans-serif;
-  --font-code: var(--font-jetbrains-mono), var(--font-noto-emoji), monospace;
+  /* Google Fonts stacks with emoji fallback (prefixed to avoid @theme collision) */
+  --font-stack-heading: var(--font-roboto), var(--font-noto-emoji), sans-serif;
+  --font-stack-body: var(--font-roboto), var(--font-noto-emoji), sans-serif;
+  --font-stack-code: var(--font-jetbrains-mono), var(--font-noto-emoji), monospace;
 
   --radius: 0.5rem;
 }
@@ -33,9 +33,9 @@
   --color-text: var(--text);
   --color-text-muted: var(--text-muted);
 
-  --font-sans: var(--font-body);
-  --font-heading: var(--font-heading);
-  --font-code: var(--font-code);
+  --font-sans: var(--font-stack-body);
+  --font-heading: var(--font-stack-heading);
+  --font-code: var(--font-stack-code);
 
   --radius-sm: calc(var(--radius) - 2px);
   --radius-md: var(--radius);
@@ -46,7 +46,7 @@
 html {
   background-color: var(--bg);
   color: var(--text);
-  font-family: var(--font-body);
+  font-family: var(--font-stack-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -90,14 +90,14 @@ body::after {
 
 /* ── Headings ─────────────────────────────────────────────────────────── */
 h1, h2, h3, h4 {
-  font-family: var(--font-heading);
+  font-family: var(--font-stack-heading);
   letter-spacing: -0.02em;
   font-weight: 600;
 }
 
 /* ── Code Blocks ──────────────────────────────────────────────────────── */
 pre, code, kbd {
-  font-family: var(--font-code);
+  font-family: var(--font-stack-code);
 }
 
 /* ── Selection ────────────────────────────────────────────────────────── */
@@ -223,7 +223,7 @@ a:hover {
   border-radius: var(--radius);
   font-size: 0.875rem;
   font-weight: 500;
-  font-family: var(--font-code);
+  font-family: var(--font-stack-code);
   line-height: 1;
   transition: all 0.15s ease;
   cursor: pointer;
@@ -304,7 +304,7 @@ a:hover {
 }
 
 .prose code {
-  font-family: var(--font-code);
+  font-family: var(--font-stack-code);
 }
 
 .prose :where(code):not(:where(pre code)) {

@@ -37,10 +37,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body 
-        className={`bg-bg text-text font-body antialiased ${jetbrainsMono.variable} ${roboto.variable} ${notoColorEmoji.variable}`}
-      >
+    <html lang="en" className={`${roboto.variable} ${jetbrainsMono.variable} ${notoColorEmoji.variable}`}>
+      <body className="bg-bg text-text font-sans antialiased">
         {children}
       </body>
     </html>
