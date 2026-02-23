@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
@@ -9,6 +10,7 @@ import { BucketHeader } from "@/components/bucket-header";
 import { FileTree, type FileEntry } from "@/components/file-tree";
 import { getFileBuffer } from "@/lib/storage";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
+import { Bone } from "@/components/skeleton";
 
 export const runtime = 'nodejs';
 
@@ -97,18 +99,7 @@ export default async function BucketPage({
     createdAt: f.createdAt,
   }));
 
-  // Check for README.md at the current directory level
   const normalizedPath = currentPath || "";
-  const readmePath = normalizedPath ? `${normalizedPath}README.md` : "README.md";
-  const hasReadme = bucketFiles.some((f) => f.path === readmePath);
-  let readmeContent: string | null = null;
-
-  if (hasReadme) {
-    const buffer = getFileBuffer(bucketId, readmePath);
-    if (buffer) {
-      readmeContent = buffer.toString("utf-8");
-    }
-  }
 
   return (
     <PageShell>
@@ -128,21 +119,68 @@ export default async function BucketPage({
         currentPath={normalizedPath}
       />
 
-      {readmeContent && (
-        <div className="mt-8 rounded-lg border border-border overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-bg/30">
-            <div className="flex gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-accent-warm/50" />
-              <span className="w-2 h-2 rounded-full bg-accent/25" />
-              <span className="w-2 h-2 rounded-full bg-border" />
+      <Suspense
+        fallback={
+          <div className="mt-8 rounded-lg border border-border overflow-hidden">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-bg/30">
+              <div className="flex gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-accent-warm/50 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-accent/25 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-border animate-pulse" />
+              </div>
+              <span className="ml-1 text-[11px] text-text-muted/60 font-code">README.md</span>
             </div>
-            <span className="ml-1 text-[11px] text-text-muted/60 font-code">README.md</span>
+            <div className="p-6 space-y-3">
+              <Bone className="h-4 w-3/4" />
+              <Bone className="h-4 w-1/2" />
+              <Bone className="h-4 w-5/6" />
+              <Bone className="h-4 w-2/3" />
+            </div>
           </div>
-          <div className="p-6">
-            <MarkdownRenderer source={readmeContent} />
-          </div>
-        </div>
-      )}
+        }
+      >
+        <ReadmeSection bucketId={bucketId} currentPath={normalizedPath} />
+      </Suspense>
     </PageShell>
+  );
+}
+
+async function ReadmeSection({
+  bucketId,
+  currentPath,
+}: {
+  bucketId: string;
+  currentPath: string;
+}) {
+  const readmePath = currentPath ? `${currentPath}README.md` : "README.md";
+
+  const file = db
+    .select()
+    .from(files)
+    .where(eq(files.bucketId, bucketId))
+    .all()
+    .find((f) => f.path === readmePath);
+
+  if (!file) return null;
+
+  const buffer = getFileBuffer(bucketId, readmePath);
+  if (!buffer) return null;
+
+  const readmeContent = buffer.toString("utf-8");
+
+  return (
+    <div className="mt-8 rounded-lg border border-border overflow-hidden">
+      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-bg/30">
+        <div className="flex gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-accent-warm/50" />
+          <span className="w-2 h-2 rounded-full bg-accent/25" />
+          <span className="w-2 h-2 rounded-full bg-border" />
+        </div>
+        <span className="ml-1 text-[11px] text-text-muted/60 font-code">README.md</span>
+      </div>
+      <div className="p-6">
+        <MarkdownRenderer source={readmeContent} />
+      </div>
+    </div>
   );
 }

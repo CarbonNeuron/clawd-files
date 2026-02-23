@@ -51,7 +51,7 @@ function FileBreadcrumbs({
     <nav aria-label="Breadcrumb" className="overflow-x-auto font-code">
       <ol className="flex items-center gap-1.5 text-sm">
         <li>
-          <Link href={`/${bucketId}`} className="text-accent hover:text-accent/80">
+          <Link href={`/${bucketId}`} className="text-text-muted hover:text-accent">
             {bucketName}
           </Link>
         </li>
@@ -60,7 +60,7 @@ function FileBreadcrumbs({
           return (
             <li key={path} className="flex items-center gap-1.5">
               <span className="text-text-muted/50">/</span>
-              <Link href={`/${bucketId}?path=${encodeURIComponent(path)}`} className="text-accent hover:text-accent/80">
+              <Link href={`/${bucketId}?path=${encodeURIComponent(path)}`} className="text-text-muted hover:text-accent">
                 {segment}
               </Link>
             </li>

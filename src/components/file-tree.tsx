@@ -143,7 +143,7 @@ function Breadcrumbs({
     <nav aria-label="Breadcrumb" className="py-3 overflow-x-auto font-code">
       <ol className="flex items-center gap-1.5 text-sm">
         <li>
-          <Link href={`/${bucketId}`} className="text-accent hover:text-accent/80">
+          <Link href={`/${bucketId}`} className="text-text-muted hover:text-accent">
             {bucketName}
           </Link>
         </li>
@@ -158,7 +158,7 @@ function Breadcrumbs({
               ) : (
                 <Link
                   href={`/${bucketId}?path=${encodeURIComponent(path)}`}
-                  className="text-accent hover:text-accent/80"
+                  className="text-text-muted hover:text-accent"
                 >
                   {segment}
                 </Link>
