@@ -20,13 +20,7 @@ export function CsvPreview({ content }: CsvPreviewProps) {
   const [sortColumn, setSortColumn] = useState<number | null>(null);
   const [sortAsc, setSortAsc] = useState(true);
 
-  if (rows.length === 0) {
-    return (
-      <p className="text-text-muted text-sm py-4">No data to display</p>
-    );
-  }
-
-  const headers = rows[0];
+  const headers = rows[0] ?? [];
   const dataRows = rows.slice(1);
   const totalRows = dataRows.length;
 
@@ -35,7 +29,6 @@ export function CsvPreview({ content }: CsvPreviewProps) {
     return [...dataRows].sort((a, b) => {
       const aVal = a[sortColumn] || "";
       const bVal = b[sortColumn] || "";
-      // Try numeric comparison
       const aNum = Number(aVal);
       const bNum = Number(bVal);
       if (!isNaN(aNum) && !isNaN(bNum)) {
@@ -46,6 +39,12 @@ export function CsvPreview({ content }: CsvPreviewProps) {
         : bVal.localeCompare(aVal);
     });
   }, [dataRows, sortColumn, sortAsc]);
+
+  if (rows.length === 0) {
+    return (
+      <p className="text-text-muted text-sm py-4">No data to display</p>
+    );
+  }
 
   const displayRows = sortedRows.slice(0, MAX_DISPLAY_ROWS);
   const isTruncated = totalRows > MAX_DISPLAY_ROWS;
