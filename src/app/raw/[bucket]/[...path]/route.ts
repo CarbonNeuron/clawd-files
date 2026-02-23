@@ -4,13 +4,46 @@ import { isExpired, secondsRemaining } from "@/lib/expiry";
 import { jsonError, jsonNotFound } from "@/lib/response";
 import { getFilePath } from "@/lib/storage";
 import { eq, and } from "drizzle-orm";
-import { readFileSync, existsSync } from "node:fs";
+import { createReadStream, existsSync, statSync } from "node:fs";
 import { basename } from "node:path";
+import { Readable } from "node:stream";
 
 export const runtime = 'nodejs';
 
+/**
+ * Parse a Range header like "bytes=0-1023" or "bytes=500-".
+ * Returns [start, end] (inclusive) or null if unparseable.
+ */
+function parseRange(header: string, fileSize: number): [number, number] | null {
+  const match = header.match(/^bytes=(\d*)-(\d*)$/);
+  if (!match) return null;
+
+  let start: number;
+  let end: number;
+
+  if (match[1] === "" && match[2] !== "") {
+    // Suffix range: bytes=-500 means last 500 bytes
+    const suffix = parseInt(match[2], 10);
+    start = Math.max(0, fileSize - suffix);
+    end = fileSize - 1;
+  } else if (match[1] !== "" && match[2] === "") {
+    // Open-ended: bytes=500-
+    start = parseInt(match[1], 10);
+    end = fileSize - 1;
+  } else if (match[1] !== "" && match[2] !== "") {
+    start = parseInt(match[1], 10);
+    end = parseInt(match[2], 10);
+  } else {
+    return null;
+  }
+
+  if (start > end || start >= fileSize) return null;
+  end = Math.min(end, fileSize - 1);
+  return [start, end];
+}
+
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ bucket: string; path: string[] }> },
 ) {
   const { bucket: bucketId, path: pathSegments } = await params;
@@ -58,7 +91,6 @@ export async function GET(
     );
   }
 
-  // Read file from disk
   const diskPath = getFilePath(bucketId, filePath);
   if (!existsSync(diskPath)) {
     return jsonError(
@@ -68,7 +100,7 @@ export async function GET(
     );
   }
 
-  const fileBuffer = readFileSync(diskPath);
+  const fileSize = statSync(diskPath).size;
   const fileName = basename(filePath);
 
   // Determine cache control
@@ -80,20 +112,54 @@ export async function GET(
     cacheControl = `public, max-age=${remaining}`;
   }
 
-  // Use RFC 5987 filename* for non-ASCII filenames (emoji, unicode, etc.)
-  // ASCII-only filenames use the simple filename="..." form.
+  // RFC 5987 filename* for non-ASCII filenames
   const isAscii = /^[\x20-\x7E]*$/.test(fileName);
   const disposition = isAscii
     ? `inline; filename="${fileName}"`
     : `inline; filename="${encodeURIComponent(fileName)}"; filename*=UTF-8''${encodeURIComponent(fileName)}`;
 
-  return new Response(fileBuffer, {
+  const commonHeaders: Record<string, string> = {
+    "Content-Type": file.mimeType,
+    "Content-Disposition": disposition,
+    "Accept-Ranges": "bytes",
+    "Cache-Control": cacheControl,
+  };
+
+  // Check for Range header
+  const rangeHeader = request.headers.get("range");
+  if (rangeHeader) {
+    const range = parseRange(rangeHeader, fileSize);
+    if (!range) {
+      return new Response("Range Not Satisfiable", {
+        status: 416,
+        headers: { "Content-Range": `bytes */${fileSize}` },
+      });
+    }
+
+    const [start, end] = range;
+    const chunkSize = end - start + 1;
+    const stream = createReadStream(diskPath, { start, end });
+    const webStream = Readable.toWeb(stream) as ReadableStream;
+
+    return new Response(webStream, {
+      status: 206,
+      headers: {
+        ...commonHeaders,
+        "Content-Length": String(chunkSize),
+        "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+      },
+    });
+  }
+
+  // No Range — stream the full file
+  const stream = createReadStream(diskPath);
+  const webStream = Readable.toWeb(stream) as ReadableStream;
+
+  return new Response(webStream, {
     status: 200,
     headers: {
-      "Content-Type": file.mimeType,
-      "Content-Disposition": disposition,
-      "Content-Length": String(file.size),
-      "Cache-Control": cacheControl,
+      ...commonHeaders,
+      "Content-Length": String(fileSize),
     },
   });
 }
