@@ -138,25 +138,28 @@ pre, code, kbd {
 }
 
 /* ── Links ────────────────────────────────────────────────────────────── */
-a {
-  color: var(--accent);
-  text-decoration: none;
-  transition: color 0.15s ease, text-shadow 0.15s ease;
-}
+/* Placed in @layer base so Tailwind utility classes can override */
+@layer base {
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.15s ease, text-shadow 0.15s ease;
+  }
 
-a:hover {
-  color: color-mix(in oklch, var(--accent) 80%, white);
-  text-shadow: 0 0 8px rgba(34, 211, 238, 0.3);
-}
+  a:hover {
+    color: color-mix(in oklch, var(--accent) 80%, white);
+    text-shadow: 0 0 8px rgba(34, 211, 238, 0.3);
+  }
 
-a.btn:hover {
-  text-shadow: none;
-}
-a.btn.btn-primary, a.btn.btn-primary:hover {
-  color: var(--bg);
-}
-a.btn.btn-outline, a.btn.btn-outline:hover {
-  color: var(--text);
+  a.btn:hover {
+    text-shadow: none;
+  }
+  a.btn.btn-primary, a.btn.btn-primary:hover {
+    color: var(--bg);
+  }
+  a.btn.btn-outline, a.btn.btn-outline:hover {
+    color: var(--text);
+  }
 }
 
 /* ── Glow effects ─────────────────────────────────────────────────────── */
