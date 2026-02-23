@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { buckets, files } from "@/lib/schema";
 import { isExpired } from "@/lib/expiry";
@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 export const runtime = "nodejs";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id: shortId } = await params;
@@ -34,5 +34,7 @@ export async function GET(
     return jsonNotFound("Not found", "This file's bucket has expired.");
   }
 
-  redirect(`/raw/${file.bucketId}/${encodePath(file.path)}`);
+  const url = new URL(request.url);
+  url.pathname = `/raw/${file.bucketId}/${encodePath(file.path)}`;
+  return NextResponse.redirect(url, 307);
 }
