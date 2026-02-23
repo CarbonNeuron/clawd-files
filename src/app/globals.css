@@ -43,6 +43,10 @@
 }
 
 /* ── Base Styles ──────────────────────────────────────────────────────── */
+*, ::before, ::after {
+  border-color: var(--border);
+}
+
 html {
   background-color: var(--bg);
   color: var(--text);
