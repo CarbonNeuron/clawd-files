@@ -20,6 +20,7 @@ const LOADED_LANGUAGES = [
   "java",
   "c",
   "cpp",
+  "csharp",
   "ruby",
   "php",
   "dockerfile",
@@ -85,6 +86,7 @@ const EXT_TO_LANG: Record<string, string> = {
   cxx: "cpp",
   hpp: "cpp",
   hxx: "cpp",
+  cs: "csharp",
   // Scripting
   rb: "ruby",
   php: "php",
