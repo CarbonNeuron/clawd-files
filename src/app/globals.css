@@ -1,26 +1,113 @@
 @import "tailwindcss";
 
+/* ── Google Fonts ─────────────────────────────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
+
+/* ── Abyssal Terminal — Color Palette ─────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #06090f;
+  --surface: #0d1520;
+  --surface-hover: #111d2c;
+  --border: #1a2d40;
+  --accent: #22d3ee;
+  --accent-warm: #f97316;
+  --text: #e2e8f0;
+  --text-muted: #64748b;
+
+  /* Font variables set by next/font on <html> */
+  --font-heading: var(--font-instrument-serif), "Instrument Serif", Georgia, serif;
+  --font-body: var(--font-geist-mono), "Geist Mono", ui-monospace, monospace;
+  --font-code: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
 }
 
+/* ── Tailwind v4 Theme Registration ───────────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colors */
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-warm: var(--accent-warm);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+
+  /* Fonts */
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+  --font-code: var(--font-code);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Base Styles ──────────────────────────────────────────────────────── */
+html {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Headings ─────────────────────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.01em;
+}
+
+/* ── Code Blocks ──────────────────────────────────────────────────────── */
+pre, code, kbd {
+  font-family: var(--font-code);
+}
+
+/* ── Selection ────────────────────────────────────────────────────────── */
+::selection {
+  background-color: color-mix(in oklch, var(--accent) 30%, transparent);
+  color: var(--text);
+}
+
+/* ── Scrollbar — dark themed, thin ────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-hover);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--bg);
+}
+
+/* ── Focus styles ─────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Links ────────────────────────────────────────────────────────────── */
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: color-mix(in oklch, var(--accent) 80%, white);
 }
