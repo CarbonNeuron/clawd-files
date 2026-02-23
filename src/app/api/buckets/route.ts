@@ -7,6 +7,8 @@ import { parseExpiry, isExpired } from "@/lib/expiry";
 import { bucketUrl } from "@/lib/urls";
 import { eq, or, isNull, gt, sql } from "drizzle-orm";
 
+export const runtime = 'nodejs';
+
 export async function POST(request: Request) {
   try {
     const auth = await authenticate(request);

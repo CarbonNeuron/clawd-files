@@ -4,8 +4,10 @@ import { isExpired, secondsRemaining } from "@/lib/expiry";
 import { jsonError, jsonNotFound } from "@/lib/response";
 import { getFilePath } from "@/lib/storage";
 import { eq, and } from "drizzle-orm";
-import { readFileSync, existsSync } from "fs";
-import { basename } from "path";
+import { readFileSync, existsSync } from "node:fs";
+import { basename } from "node:path";
+
+export const runtime = 'nodejs';
 
 export async function GET(
   _request: Request,

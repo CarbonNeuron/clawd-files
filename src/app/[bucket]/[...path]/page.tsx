@@ -6,7 +6,7 @@ import { isExpired } from "@/lib/expiry";
 import { getFileBuffer } from "@/lib/storage";
 import { renderMarkdown } from "@/lib/markdown";
 import { eq, and } from "drizzle-orm";
-import { extname } from "path";
+import { extname } from "node:path";
 import { PageShell } from "@/components/page-shell";
 import { FilePreview } from "@/components/file-preview";
 import { CodePreview } from "@/components/preview/code-preview";
@@ -16,6 +16,8 @@ import { AudioPreview } from "@/components/preview/audio-preview";
 import { CsvPreview } from "@/components/preview/csv-preview";
 import { MarkdownPreview } from "@/components/preview/markdown-preview";
 import { DownloadPreview } from "@/components/preview/download-preview";
+
+export const runtime = 'nodejs';
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 

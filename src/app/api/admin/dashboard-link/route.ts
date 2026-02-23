@@ -1,6 +1,8 @@
 import { authenticate, AuthError, generateDashboardToken } from "@/lib/auth";
 import { jsonSuccess, jsonError } from "@/lib/response";
 
+export const runtime = 'nodejs';
+
 export async function GET(request: Request) {
   try {
     const auth = await authenticate(request);

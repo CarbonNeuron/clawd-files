@@ -1,8 +1,8 @@
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import * as schema from "./schema";
-import { existsSync, mkdirSync } from "fs";
-import { join } from "path";
+import { existsSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
 
 const DATA_DIR = process.env.DATA_DIR || "./data";
 

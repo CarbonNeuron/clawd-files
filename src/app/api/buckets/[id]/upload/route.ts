@@ -8,6 +8,8 @@ import { fileUrl } from "@/lib/urls";
 import { lookup } from "mime-types";
 import { eq, and } from "drizzle-orm";
 
+export const runtime = 'nodejs';
+
 const GENERIC_FIELD_NAMES = new Set(["file", "files", "upload", "uploads", "blob"]);
 
 function sanitizePath(raw: string): string {

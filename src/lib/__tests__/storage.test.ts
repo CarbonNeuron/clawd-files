@@ -1,6 +1,6 @@
 import { describe, it, expect, afterAll } from "vitest";
-import { existsSync, readFileSync, rmSync } from "fs";
-import { join } from "path";
+import { existsSync, readFileSync, rmSync } from "node:fs";
+import { join } from "node:path";
 
 const TEST_DIR = "/tmp/clawd-test-storage-" + Date.now();
 process.env.DATA_DIR = TEST_DIR;

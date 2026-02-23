@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Download, FileIcon } from "lucide-react";
-import { basename } from "path";
+import { basename } from "node:path";
 
 interface DownloadPreviewProps {
   bucketId: string;

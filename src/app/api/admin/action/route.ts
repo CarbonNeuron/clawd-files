@@ -5,6 +5,8 @@ import { deleteBucket } from "@/lib/storage";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
+export const runtime = 'nodejs';
+
 type ActionBody = {
   token: string;
   action: "revoke_key" | "delete_bucket";

@@ -6,6 +6,8 @@ import { isExpired } from "@/lib/expiry";
 import { deleteFile } from "@/lib/storage";
 import { eq, and } from "drizzle-orm";
 
+export const runtime = 'nodejs';
+
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> },

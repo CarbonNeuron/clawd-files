@@ -1,5 +1,7 @@
 import { generateMarkdown } from "@/lib/api-docs";
 
+export const runtime = 'nodejs';
+
 export async function GET() {
   const markdown = generateMarkdown();
 

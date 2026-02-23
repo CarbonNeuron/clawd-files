@@ -1,5 +1,5 @@
 import { highlight, extToLang } from "@/lib/highlight";
-import { extname } from "path";
+import { extname } from "node:path";
 
 interface CodePreviewProps {
   content: string;

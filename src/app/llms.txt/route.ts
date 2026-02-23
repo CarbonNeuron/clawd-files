@@ -1,3 +1,5 @@
+export const runtime = 'nodejs';
+
 export async function GET() {
   const baseUrl = process.env.BASE_URL || "http://localhost:3000";
 

@@ -5,6 +5,8 @@ import { authenticate, AuthError } from "@/lib/auth";
 import { jsonSuccess, jsonError } from "@/lib/response";
 import { eq, sql, count } from "drizzle-orm";
 
+export const runtime = 'nodejs';
+
 export async function POST(request: Request) {
   try {
     const auth = await authenticate(request);

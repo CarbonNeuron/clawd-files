@@ -10,6 +10,8 @@ import { FileTree, type FileEntry } from "@/components/file-tree";
 import { getFileBuffer } from "@/lib/storage";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
 
+export const runtime = 'nodejs';
+
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 
 export async function generateMetadata({

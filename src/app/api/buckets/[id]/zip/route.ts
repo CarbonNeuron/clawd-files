@@ -7,6 +7,8 @@ import { eq } from "drizzle-orm";
 import archiver from "archiver";
 import { PassThrough, Readable } from "stream";
 
+export const runtime = 'nodejs';
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },

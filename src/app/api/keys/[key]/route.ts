@@ -4,6 +4,8 @@ import { authenticate, AuthError } from "@/lib/auth";
 import { jsonSuccess, jsonError, jsonNotFound } from "@/lib/response";
 import { eq } from "drizzle-orm";
 
+export const runtime = 'nodejs';
+
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ key: string }> },

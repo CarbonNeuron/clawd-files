@@ -7,6 +7,8 @@ import { bucketUrl, fileUrl } from "@/lib/urls";
 import { deleteBucket } from "@/lib/storage";
 import { eq } from "drizzle-orm";
 
+export const runtime = 'nodejs';
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },

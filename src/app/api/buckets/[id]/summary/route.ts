@@ -4,6 +4,8 @@ import { isExpired } from "@/lib/expiry";
 import { getFileBuffer } from "@/lib/storage";
 import { eq } from "drizzle-orm";
 
+export const runtime = 'nodejs';
+
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes}B`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)}KB`;

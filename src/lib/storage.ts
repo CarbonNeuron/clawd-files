@@ -6,9 +6,9 @@ import {
   rmSync,
   readFileSync,
   createReadStream,
-} from "fs";
-import { join, dirname, resolve } from "path";
-import type { ReadStream } from "fs";
+} from "node:fs";
+import { join, dirname, resolve } from "node:path";
+import type { ReadStream } from "node:fs";
 
 export function getDataDir(): string {
   return process.env.DATA_DIR || "./data";
