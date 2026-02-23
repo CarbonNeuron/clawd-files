@@ -6,9 +6,13 @@ import {
   rmSync,
   readFileSync,
   createReadStream,
+  createWriteStream,
+  statSync,
 } from "node:fs";
 import { join, dirname, resolve } from "node:path";
-import type { ReadStream } from "node:fs";
+import { pipeline } from "node:stream/promises";
+import type { ReadStream, WriteStream } from "node:fs";
+import type { Readable } from "node:stream";
 
 export function getDataDir(): string {
   return process.env.DATA_DIR || "./data";
@@ -34,6 +38,23 @@ export async function saveFile(
     mkdirSync(dir, { recursive: true });
   }
   writeFileSync(fullPath, content);
+}
+
+/**
+ * Stream a file to disk and return its final size in bytes.
+ */
+export async function saveFileStream(
+  bucketId: string,
+  filePath: string,
+  stream: Readable,
+): Promise<number> {
+  const fullPath = getFilePath(bucketId, filePath);
+  const dir = dirname(fullPath);
+  if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true });
+  }
+  await pipeline(stream, createWriteStream(fullPath));
+  return statSync(fullPath).size;
 }
 
 export async function deleteFile(
