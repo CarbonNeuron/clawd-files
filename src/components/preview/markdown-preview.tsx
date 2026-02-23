@@ -1,6 +1,6 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs } from "@/components/tabs";
 
 interface MarkdownPreviewProps {
   /**
@@ -19,25 +19,30 @@ export function MarkdownPreview({
   rawSource,
 }: MarkdownPreviewProps) {
   return (
-    <Tabs defaultValue="rendered">
-      <TabsList className="font-code">
-        <TabsTrigger value="rendered" className="text-xs">Rendered</TabsTrigger>
-        <TabsTrigger value="source" className="text-xs">Source</TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="rendered">
-        {/* SECURITY: Trusted pipeline output — see renderedHtml JSDoc above */}
-        <div
-          className="prose prose-invert max-w-none"
-          dangerouslySetInnerHTML={{ __html: renderedHtml }}
-        />
-      </TabsContent>
-
-      <TabsContent value="source">
-        <pre className="overflow-x-auto rounded-lg border border-border bg-surface/50 p-4 text-sm font-code text-text leading-relaxed whitespace-pre-wrap">
-          {rawSource}
-        </pre>
-      </TabsContent>
-    </Tabs>
+    <Tabs
+      defaultValue="rendered"
+      tabs={[
+        {
+          value: "rendered",
+          label: "Rendered",
+          content: (
+            /* SECURITY: Trusted pipeline output — see renderedHtml JSDoc above */
+            <div
+              className="prose prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: renderedHtml }}
+            />
+          ),
+        },
+        {
+          value: "source",
+          label: "Source",
+          content: (
+            <pre className="overflow-x-auto rounded-lg border border-border bg-surface/50 p-4 text-sm font-code text-text leading-relaxed whitespace-pre-wrap">
+              {rawSource}
+            </pre>
+          ),
+        },
+      ]}
+    />
   );
 }
