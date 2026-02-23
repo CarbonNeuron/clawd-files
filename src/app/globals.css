@@ -8,7 +8,7 @@
   --bg: #06090f;
   --surface: #0d1520;
   --surface-hover: #111d2c;
-  --border: #1a2d40;
+  --edge: #1a2d40;
   --accent: #22d3ee;
   --accent-warm: #f97316;
   --text: #e2e8f0;
@@ -27,7 +27,7 @@
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
-  --color-border: var(--border);
+  --color-border: var(--edge);
   --color-accent: var(--accent);
   --color-accent-warm: var(--accent-warm);
   --color-text: var(--text);
@@ -43,10 +43,6 @@
 }
 
 /* ── Base Styles ──────────────────────────────────────────────────────── */
-*, ::before, ::after {
-  border-color: var(--border);
-}
-
 html {
   background-color: var(--bg);
   color: var(--text);
@@ -121,7 +117,7 @@ pre, code, kbd {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: var(--edge);
   border-radius: 3px;
 }
 
@@ -132,7 +128,7 @@ pre, code, kbd {
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--border) var(--bg);
+  scrollbar-color: var(--edge) var(--bg);
 }
 
 /* ── Focus styles ─────────────────────────────────────────────────────── */
@@ -172,7 +168,7 @@ a:hover {
 
 /* ── Terminal-style decorations ────────────────────────────────────────── */
 .terminal-border {
-  border: 1px solid var(--border);
+  border: 1px solid var(--edge);
   position: relative;
 }
 
@@ -252,7 +248,7 @@ a:hover {
 .btn-outline {
   background: var(--surface);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--edge);
 }
 .btn-outline:hover {
   border-color: color-mix(in oklch, var(--accent) 30%, transparent);
@@ -290,20 +286,20 @@ a:hover {
   --tw-prose-bold: var(--text);
   --tw-prose-counters: var(--text-muted);
   --tw-prose-bullets: var(--text-muted);
-  --tw-prose-hr: var(--border);
+  --tw-prose-hr: var(--edge);
   --tw-prose-quotes: var(--text);
   --tw-prose-quote-borders: var(--accent);
   --tw-prose-captions: var(--text-muted);
   --tw-prose-code: var(--accent);
   --tw-prose-pre-code: var(--text);
   --tw-prose-pre-bg: var(--surface);
-  --tw-prose-th-borders: var(--border);
-  --tw-prose-td-borders: var(--border);
+  --tw-prose-th-borders: var(--edge);
+  --tw-prose-td-borders: var(--edge);
 }
 
 .prose pre {
   background-color: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--edge);
   border-radius: 0.5rem;
 }
 
@@ -334,16 +330,16 @@ a:hover {
 }
 
 .prose table {
-  border-color: var(--border);
+  border-color: var(--edge);
 }
 
 .prose thead th {
-  border-bottom-color: var(--border);
+  border-bottom-color: var(--edge);
   color: var(--text);
 }
 
 .prose tbody td {
-  border-bottom-color: var(--border);
+  border-bottom-color: var(--edge);
 }
 
 .prose img {
@@ -353,7 +349,7 @@ a:hover {
 /* Shiki code blocks inside prose — override prose pre padding */
 .prose .shiki {
   overflow-x: auto;
-  border: 1px solid var(--border);
+  border: 1px solid var(--edge);
   border-radius: 0.5rem;
   padding: 1rem;
 }
