@@ -43,7 +43,7 @@ export async function GET(
       size: f.size,
       mime_type: f.mimeType,
       created_at: f.createdAt,
-      ...fileUrl(bucket.id, f.path),
+      ...fileUrl(bucket.id, f.path, f.shortId),
     })),
   });
 }

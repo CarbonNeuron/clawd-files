@@ -10,6 +10,7 @@ interface FilePreviewProps {
   mimeType: string;
   size: number;
   expiresAt: number | null;
+  shortId: string | null;
   children: React.ReactNode;
 }
 
@@ -83,12 +84,15 @@ export function FilePreview({
   mimeType,
   size,
   expiresAt,
+  shortId,
   children,
 }: FilePreviewProps) {
   const remaining = secondsRemaining(expiresAt);
   const baseUrl = process.env.BASE_URL || "http://localhost:3000";
   const rawUrl = `/raw/${bucketId}/${encodePath(filePath)}`;
-  const curlCommand = `curl -O ${baseUrl}/raw/${bucketId}/${encodePath(filePath)}`;
+  const curlCommand = shortId
+    ? `curl -OJ ${baseUrl}/s/${shortId}`
+    : `curl -O ${baseUrl}/raw/${bucketId}/${encodePath(filePath)}`;
   const fileName = filePath.split("/").pop() || filePath;
   const ext = getExtBadge(filePath);
 

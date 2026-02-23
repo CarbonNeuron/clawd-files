@@ -47,3 +47,12 @@ const createTablesSql = `
 `;
 
 sqlite.exec(createTablesSql);
+
+// Migrations — idempotent column additions
+const migrations = [
+  `ALTER TABLE files ADD COLUMN short_id TEXT`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS files_short_id ON files(short_id)`,
+];
+for (const sql of migrations) {
+  try { sqlite.exec(sql); } catch { /* column/index already exists */ }
+}

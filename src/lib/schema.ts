@@ -27,6 +27,7 @@ export const files = sqliteTable("files", {
   path: text("path").notNull(),
   size: integer("size").notNull(),
   mimeType: text("mime_type").notNull(),
+  shortId: text("short_id"),
   createdAt: integer("created_at").notNull(),
 }, (table) => [
   unique().on(table.bucketId, table.path),

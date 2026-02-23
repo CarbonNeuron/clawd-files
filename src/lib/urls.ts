@@ -19,12 +19,13 @@ export function bucketUrl(bucketId: string) {
   };
 }
 
-export function fileUrl(bucketId: string, filePath: string) {
+export function fileUrl(bucketId: string, filePath: string, shortId?: string | null) {
   const base = getBaseUrl();
   const encoded = encodePath(filePath);
   return {
     url: `${base}/${bucketId}/${encoded}`,
     raw_url: `${base}/raw/${bucketId}/${encoded}`,
+    ...(shortId ? { short_url: `${base}/s/${shortId}` } : {}),
     api_url: `${base}/api/buckets/${bucketId}`,
   };
 }

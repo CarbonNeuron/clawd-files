@@ -1,5 +1,6 @@
 import { Readable } from "node:stream";
 import Busboy from "busboy";
+import { nanoid } from "nanoid";
 import { db } from "@/lib/db";
 import { buckets, files } from "@/lib/schema";
 import { authenticate, AuthError } from "@/lib/auth";
@@ -59,6 +60,7 @@ type UploadedFile = {
   mime_type: string;
   url: string;
   raw_url: string;
+  short_url?: string;
   api_url: string;
 };
 
@@ -109,17 +111,19 @@ function parseMultipart(
             .where(and(eq(files.bucketId, bucketId), eq(files.path, filePath)))
             .run();
 
+          const shortId = nanoid(6);
           db.insert(files)
             .values({
               bucketId,
               path: filePath,
               size,
               mimeType,
+              shortId,
               createdAt: now,
             })
             .run();
 
-          const urls = fileUrl(bucketId, filePath);
+          const urls = fileUrl(bucketId, filePath, shortId);
           uploaded.push({
             path: filePath,
             size,

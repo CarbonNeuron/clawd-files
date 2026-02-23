@@ -228,6 +228,7 @@ export function FileTree({
                             ? `/${bucketId}?path=${encodeURIComponent(entry.path)}`
                             : `/${bucketId}/${encodePath(entry.path)}`
                         }
+                        prefetch={false}
                         className="flex items-center gap-2.5 text-text hover:text-accent transition-colors"
                       >
                         {entry.isFolder ? (
