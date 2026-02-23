@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { buckets, files } from "@/lib/schema";
 import { isExpired } from "@/lib/expiry";
@@ -15,6 +16,125 @@ import { AudioPreview } from "@/components/preview/audio-preview";
 import { CsvPreview } from "@/components/preview/csv-preview";
 import { MarkdownPreview } from "@/components/preview/markdown-preview";
 import { DownloadPreview } from "@/components/preview/download-preview";
+
+const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+
+const OG_IMAGE_EXTENSIONS = new Set([
+  ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg",
+]);
+
+const OG_VIDEO_EXTENSIONS = new Set([".mp4", ".webm"]);
+
+const OG_AUDIO_EXTENSIONS = new Set([".mp3", ".wav", ".ogg"]);
+
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024 * 1024 * 1024)
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+}
+
+function getFileName(filePath: string): string {
+  const parts = filePath.split("/");
+  return parts[parts.length - 1];
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ bucket: string; path: string[] }>;
+}): Promise<Metadata> {
+  const { bucket: bucketId, path: pathSegments } = await params;
+  const filePath = pathSegments.join("/");
+
+  const bucket = db
+    .select()
+    .from(buckets)
+    .where(eq(buckets.id, bucketId))
+    .get();
+
+  if (!bucket || isExpired(bucket.expiresAt)) {
+    return { title: "Not Found" };
+  }
+
+  const file = db
+    .select()
+    .from(files)
+    .where(and(eq(files.bucketId, bucketId), eq(files.path, filePath)))
+    .get();
+
+  if (!file) {
+    return { title: "Not Found" };
+  }
+
+  const fileName = getFileName(filePath);
+  const ext = extname(filePath).toLowerCase();
+  const description = `${file.mimeType} · ${formatSize(file.size)} — in ${bucket.name}`;
+  const rawUrl = `${BASE_URL}/raw/${bucketId}/${filePath}`;
+  const ogCardUrl = `${BASE_URL}/api/og/${bucketId}/${filePath}`;
+
+  const metadata: Metadata = {
+    title: fileName,
+    description,
+    openGraph: {
+      title: fileName,
+      description,
+    },
+  };
+
+  if (OG_IMAGE_EXTENSIONS.has(ext)) {
+    // For images: use the raw image as the OG image
+    metadata.openGraph!.images = [
+      {
+        url: rawUrl,
+        alt: fileName,
+      },
+    ];
+  } else if (OG_VIDEO_EXTENSIONS.has(ext)) {
+    // For videos: OG video + generic card as image
+    metadata.openGraph!.videos = [
+      {
+        url: rawUrl,
+      },
+    ];
+    metadata.openGraph!.images = [
+      {
+        url: ogCardUrl,
+        width: 1200,
+        height: 630,
+        alt: fileName,
+      },
+    ];
+  } else if (OG_AUDIO_EXTENSIONS.has(ext)) {
+    // For audio: OG audio + generic card as image
+    metadata.openGraph!.audio = [
+      {
+        url: rawUrl,
+      },
+    ];
+    metadata.openGraph!.images = [
+      {
+        url: ogCardUrl,
+        width: 1200,
+        height: 630,
+        alt: fileName,
+      },
+    ];
+  } else {
+    // Everything else: generic OG card
+    metadata.openGraph!.images = [
+      {
+        url: ogCardUrl,
+        width: 1200,
+        height: 630,
+        alt: fileName,
+      },
+    ];
+  }
+
+  return metadata;
+}
 
 // Extensions that should be rendered as code
 const CODE_EXTENSIONS = new Set([

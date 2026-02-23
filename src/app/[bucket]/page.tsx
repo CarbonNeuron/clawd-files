@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { buckets, files } from "@/lib/schema";
 import { isExpired } from "@/lib/expiry";
@@ -8,6 +9,56 @@ import { BucketHeader } from "@/components/bucket-header";
 import { FileTree, type FileEntry } from "@/components/file-tree";
 import { getFileBuffer } from "@/lib/storage";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
+
+const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ bucket: string }>;
+}): Promise<Metadata> {
+  const { bucket: bucketId } = await params;
+
+  const bucket = db
+    .select()
+    .from(buckets)
+    .where(eq(buckets.id, bucketId))
+    .get();
+
+  if (!bucket || isExpired(bucket.expiresAt)) {
+    return { title: "Not Found" };
+  }
+
+  const fileCount = db
+    .select()
+    .from(files)
+    .where(eq(files.bucketId, bucketId))
+    .all().length;
+
+  const description = [
+    `${fileCount} ${fileCount === 1 ? "file" : "files"} by ${bucket.owner}`,
+    bucket.description,
+  ]
+    .filter(Boolean)
+    .join(" — ");
+
+  return {
+    title: bucket.name,
+    description,
+    openGraph: {
+      title: bucket.name,
+      description,
+      images: [
+        {
+          url: `${BASE_URL}/api/og/${bucketId}`,
+          width: 1200,
+          height: 630,
+          alt: bucket.name,
+        },
+      ],
+    },
+  };
+}
 
 export default async function BucketPage({
   params,
