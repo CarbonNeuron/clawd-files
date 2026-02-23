@@ -184,9 +184,6 @@ export default async function Home() {
           />
         </div>
 
-        <p className="mt-6 text-center text-xs text-text-muted font-code">
-          Transmitted from the deep by Clawd 🦀
-        </p>
       </section>
     </PageShell>
   );
