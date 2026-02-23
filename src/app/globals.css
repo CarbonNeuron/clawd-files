@@ -4,6 +4,9 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* ── Typography plugin ────────────────────────────────────────────────── */
+@plugin "@tailwindcss/typography";
+
 @custom-variant dark (&:is(.dark *));
 
 /* ── Abyssal Terminal — Color Palette ─────────────────────────────────── */
@@ -200,4 +203,88 @@ a:hover {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ── Prose / Markdown — Abyssal Terminal overrides ───────────────────── */
+.prose {
+  --tw-prose-body: var(--text);
+  --tw-prose-headings: var(--text);
+  --tw-prose-lead: var(--text-muted);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--text);
+  --tw-prose-counters: var(--text-muted);
+  --tw-prose-bullets: var(--text-muted);
+  --tw-prose-hr: var(--border);
+  --tw-prose-quotes: var(--text);
+  --tw-prose-quote-borders: var(--accent);
+  --tw-prose-captions: var(--text-muted);
+  --tw-prose-code: var(--accent);
+  --tw-prose-pre-code: var(--text);
+  --tw-prose-pre-bg: var(--surface);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: var(--border);
+}
+
+.prose pre {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+
+.prose code {
+  font-family: var(--font-code);
+}
+
+.prose :where(code):not(:where(pre code)) {
+  background-color: var(--surface);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose a:hover {
+  color: color-mix(in oklch, var(--accent) 80%, white);
+}
+
+.prose blockquote {
+  border-left-color: var(--accent);
+  font-style: normal;
+}
+
+.prose table {
+  border-color: var(--border);
+}
+
+.prose thead th {
+  border-bottom-color: var(--border);
+  color: var(--text);
+}
+
+.prose tbody td {
+  border-bottom-color: var(--border);
+}
+
+.prose img {
+  border-radius: 0.5rem;
+}
+
+/* Shiki code blocks inside prose — override prose pre padding */
+.prose .shiki {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.prose .shiki code {
+  background: transparent;
+  padding: 0;
+  font-size: 0.875rem;
+  line-height: 1.7;
 }

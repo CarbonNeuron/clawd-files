@@ -7,6 +7,7 @@ import { PageShell } from "@/components/page-shell";
 import { BucketHeader } from "@/components/bucket-header";
 import { FileTree, type FileEntry } from "@/components/file-tree";
 import { getFileBuffer } from "@/lib/storage";
+import { MarkdownRenderer } from "@/components/markdown-renderer";
 
 export default async function BucketPage({
   params,
@@ -79,9 +80,7 @@ export default async function BucketPage({
           <h2 className="font-heading text-lg text-text-muted mb-4">
             README.md
           </h2>
-          <pre className="whitespace-pre-wrap text-sm text-text font-code leading-relaxed overflow-x-auto">
-            {readmeContent}
-          </pre>
+          <MarkdownRenderer source={readmeContent} />
         </div>
       )}
     </PageShell>
