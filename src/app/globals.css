@@ -22,9 +22,9 @@
   --text-muted: #94a3b8;
 
   /* Google Fonts stacks with emoji fallback */
-  --font-heading: var(--font-roboto, "Roboto"), var(--font-noto-emoji, "Noto Color Emoji"), sans-serif;
-  --font-body: var(--font-roboto, "Roboto"), var(--font-noto-emoji, "Noto Color Emoji"), sans-serif;
-  --font-code: var(--font-jetbrains-mono, "JetBrains Mono"), var(--font-noto-emoji, "Noto Color Emoji"), monospace;
+  --font-heading: var(--font-roboto), var(--font-noto-emoji), sans-serif;
+  --font-body: var(--font-roboto), var(--font-noto-emoji), sans-serif;
+  --font-code: var(--font-jetbrains-mono), var(--font-noto-emoji), monospace;
 
   /* shadcn/ui overrides — Abyssal Terminal dark palette */
   --radius: 0.625rem;
