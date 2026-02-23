@@ -49,7 +49,7 @@ export async function generateMetadata({
   params: Promise<{ bucket: string; path: string[] }>;
 }): Promise<Metadata> {
   const { bucket: bucketId, path: pathSegments } = await params;
-  const filePath = pathSegments.join("/");
+  const filePath = pathSegments.map(decodeURIComponent).join("/");
 
   const bucket = db
     .select()
@@ -177,7 +177,7 @@ export default async function FilePreviewPage({
   params: Promise<{ bucket: string; path: string[] }>;
 }) {
   const { bucket: bucketId, path: pathSegments } = await params;
-  const filePath = pathSegments.join("/");
+  const filePath = pathSegments.map(decodeURIComponent).join("/");
 
   // Look up bucket
   const bucket = db

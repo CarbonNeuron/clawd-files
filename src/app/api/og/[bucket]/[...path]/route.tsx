@@ -24,7 +24,7 @@ export async function GET(
   { params }: { params: Promise<{ bucket: string; path: string[] }> }
 ) {
   const { bucket: bucketId, path: pathSegments } = await params;
-  const filePath = pathSegments.join("/");
+  const filePath = pathSegments.map(decodeURIComponent).join("/");
 
   const bucket = db
     .select()
