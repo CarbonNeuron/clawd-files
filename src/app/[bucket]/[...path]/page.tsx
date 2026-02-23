@@ -142,7 +142,7 @@ export async function generateMetadata({
 // Extensions that should be rendered as code
 const CODE_EXTENSIONS = new Set([
   ".js", ".ts", ".jsx", ".tsx", ".py", ".rb", ".rs", ".go", ".java",
-  ".c", ".cpp", ".h", ".sh", ".sql", ".json", ".yaml", ".yml", ".toml",
+  ".c", ".cpp", ".cs", ".h", ".sh", ".sql", ".json", ".yaml", ".yml", ".toml",
   ".xml", ".html", ".css", ".php", ".ini", ".diff", ".dockerfile",
   ".txt", ".log", ".env", ".conf", ".cfg", ".md",
 ]);
