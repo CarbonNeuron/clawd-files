@@ -87,29 +87,29 @@ export const API_DOCS: EndpointGroup[] = [
         method: "POST",
         path: "/api/buckets",
         description:
-          "Create a new bucket. Requires an API key (not admin). Expiry presets: 1h, 6h, 12h, 1d, 3d, 1w, 2w, 1m, never.",
+          'Create a new bucket. Requires an API key (not the admin key). The "owner" field is auto-populated from the API key\'s name — do not send it.\n\nRequest body fields:\n- **name** (string, required): Bucket display name.\n- **description** (string, optional): Bucket description.\n- **for** (string, optional): Purpose label (e.g. "code-review").\n- **expires_in** (string, optional): Expiry preset or seconds. Presets: 1h, 6h, 12h, 1d, 3d, 1w, 2w, 1m, never. Defaults to **7 days** (1w) if omitted or invalid.',
         auth: "api_key",
         requestBody: {
           name: "my-project",
           description: "Project source files",
           for: "code-review",
-          expires_in: "7d",
+          expires_in: "1w",
         },
         responseExample: {
           ok: true,
           data: {
-            id: "abc123",
+            id: "abc123defg",
             name: "my-project",
             owner: "claude-agent",
             description: "Project source files",
             for: "code-review",
             created_at: 1700000000,
             expires_at: 1700604800,
-            url: `${BASE}/abc123`,
-            api_url: `${BASE}/api/buckets/abc123`,
+            url: `${BASE}/abc123defg`,
+            api_url: `${BASE}/api/buckets/abc123defg`,
           },
         },
-        curl: `curl -X POST ${BASE}/api/buckets \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"name": "my-project", "expires_in": "7d"}'`,
+        curl: `curl -X POST ${BASE}/api/buckets \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"name": "my-project", "description": "Project source files", "for": "code-review", "expires_in": "1w"}'`,
       },
       {
         method: "GET",
@@ -122,11 +122,15 @@ export const API_DOCS: EndpointGroup[] = [
           data: {
             buckets: [
               {
-                id: "abc123",
+                id: "abc123defg",
                 name: "my-project",
                 owner: "claude-agent",
+                description: "Project source files",
+                for: "code-review",
                 created_at: 1700000000,
                 expires_at: 1700604800,
+                url: `${BASE}/abc123defg`,
+                api_url: `${BASE}/api/buckets/abc123defg`,
               },
             ],
           },
@@ -136,30 +140,40 @@ export const API_DOCS: EndpointGroup[] = [
       {
         method: "GET",
         path: "/api/buckets/:id",
-        description: "Get bucket details including full file listing. Public — no auth required.",
+        description: "Get bucket details including full file listing. Public — no auth required. Each file includes a short_url for compact sharing.",
         auth: "public",
         responseExample: {
           ok: true,
           data: {
-            id: "abc123",
+            id: "abc123defg",
             name: "my-project",
             owner: "claude-agent",
+            description: "Project source files",
+            for: "code-review",
+            created_at: 1700000000,
+            expires_at: 1700604800,
+            url: `${BASE}/abc123defg`,
+            api_url: `${BASE}/api/buckets/abc123defg`,
             files: [
               {
                 path: "src/main.rs",
                 size: 1234,
                 mime_type: "text/x-rust",
-                raw_url: `${BASE}/raw/abc123/src/main.rs`,
+                created_at: 1700000000,
+                url: `${BASE}/abc123defg/src/main.rs`,
+                raw_url: `${BASE}/raw/abc123defg/src/main.rs`,
+                short_url: `${BASE}/s/xK9mQ2`,
+                api_url: `${BASE}/api/buckets/abc123defg`,
               },
             ],
           },
         },
-        curl: `curl ${BASE}/api/buckets/abc123`,
+        curl: `curl ${BASE}/api/buckets/abc123defg`,
       },
       {
         method: "PATCH",
         path: "/api/buckets/:id",
-        description: "Update bucket metadata. Only the owner or admin can modify.",
+        description: "Update bucket metadata. Only the owner or admin can modify. All fields are optional but at least one must be provided.",
         auth: "owner",
         requestBody: {
           name: "renamed-project",
@@ -169,13 +183,18 @@ export const API_DOCS: EndpointGroup[] = [
         responseExample: {
           ok: true,
           data: {
-            id: "abc123",
+            id: "abc123defg",
             name: "renamed-project",
+            owner: "claude-agent",
             description: "Updated description",
+            for: "code-review",
+            created_at: 1700000000,
             expires_at: 1702592000,
+            url: `${BASE}/abc123defg`,
+            api_url: `${BASE}/api/buckets/abc123defg`,
           },
         },
-        curl: `curl -X PATCH ${BASE}/api/buckets/abc123 \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"name": "renamed-project"}'`,
+        curl: `curl -X PATCH ${BASE}/api/buckets/abc123defg \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"name": "renamed-project"}'`,
       },
       {
         method: "DELETE",
@@ -184,9 +203,9 @@ export const API_DOCS: EndpointGroup[] = [
         auth: "owner",
         responseExample: {
           ok: true,
-          data: { deleted: true, id: "abc123" },
+          data: { deleted: true, id: "abc123defg" },
         },
-        curl: `curl -X DELETE ${BASE}/api/buckets/abc123 \\\n  -H "Authorization: Bearer $API_KEY"`,
+        curl: `curl -X DELETE ${BASE}/api/buckets/abc123defg \\\n  -H "Authorization: Bearer $API_KEY"`,
       },
     ],
   },
@@ -199,35 +218,46 @@ export const API_DOCS: EndpointGroup[] = [
         method: "POST",
         path: "/api/buckets/:id/upload",
         description:
-          "Upload files via multipart/form-data. The field name becomes the file path. Use generic names like 'file' to use the original filename.",
+          'Upload files via multipart/form-data. Accepts multiple files in a single request. The form field name determines the file path: use a generic name (file, files, upload, uploads, blob) to keep the original filename, or set the field name to a custom path (e.g. "src/main.rs") to override it. Re-uploading the same path overwrites the existing file. Each uploaded file gets a short_url — a compact, shareable link (e.g. /s/xK9mQ2) that redirects to the raw file.',
         auth: "owner",
         responseExample: {
           ok: true,
           data: {
             uploaded: [
               {
-                path: "src/main.rs",
-                size: 1234,
-                mime_type: "text/x-rust",
-                url: `${BASE}/abc123/src/main.rs`,
-                raw_url: `${BASE}/raw/abc123/src/main.rs`,
+                path: "screenshot.png",
+                size: 48210,
+                mime_type: "image/png",
+                url: `${BASE}/abc123defg/screenshot.png`,
+                raw_url: `${BASE}/raw/abc123defg/screenshot.png`,
+                short_url: `${BASE}/s/xK9mQ2`,
+                api_url: `${BASE}/api/buckets/abc123defg`,
+              },
+              {
+                path: "README.md",
+                size: 256,
+                mime_type: "text/markdown",
+                url: `${BASE}/abc123defg/README.md`,
+                raw_url: `${BASE}/raw/abc123defg/README.md`,
+                short_url: `${BASE}/s/pL3nR7`,
+                api_url: `${BASE}/api/buckets/abc123defg`,
               },
             ],
           },
         },
-        curl: `curl -X POST ${BASE}/api/buckets/abc123/upload \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -F "src/main.rs=@main.rs" \\\n  -F "README.md=@README.md"`,
+        curl: `# Upload multiple files (use -F for each file):\ncurl -X POST ${BASE}/api/buckets/abc123defg/upload \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -F "files=@screenshot.png" \\\n  -F "files=@README.md"\n\n# Upload with custom path (field name = desired path):\ncurl -X POST ${BASE}/api/buckets/abc123defg/upload \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -F "src/main.rs=@main.rs"`,
       },
       {
         method: "DELETE",
         path: "/api/buckets/:id/files",
-        description: "Delete a specific file from a bucket by path.",
+        description: "Delete a specific file from a bucket by path. Send the path as JSON in the request body.",
         auth: "owner",
         requestBody: { path: "src/main.rs" },
         responseExample: {
           ok: true,
           data: { deleted: true, path: "src/main.rs" },
         },
-        curl: `curl -X DELETE ${BASE}/api/buckets/abc123/files \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"path": "src/main.rs"}'`,
+        curl: `curl -X DELETE ${BASE}/api/buckets/abc123defg/files \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"path": "src/main.rs"}'`,
       },
     ],
   },
@@ -240,10 +270,10 @@ export const API_DOCS: EndpointGroup[] = [
         method: "GET",
         path: "/raw/:bucket/:path",
         description:
-          "Download a raw file. Returns the file with its original MIME type. Supports range requests.",
+          "Download a raw file. Returns the file with its original MIME type. Supports HTTP Range requests for partial content.",
         auth: "public",
         responseExample: { "(raw file content)": "" },
-        curl: `curl ${BASE}/raw/abc123/src/main.rs`,
+        curl: `curl ${BASE}/raw/abc123defg/src/main.rs`,
       },
       {
         method: "GET",
@@ -251,7 +281,7 @@ export const API_DOCS: EndpointGroup[] = [
         description: "Download all files in a bucket as a ZIP archive.",
         auth: "public",
         responseExample: { "(ZIP archive)": "" },
-        curl: `curl -o bucket.zip ${BASE}/api/buckets/abc123/zip`,
+        curl: `curl -o bucket.zip ${BASE}/api/buckets/abc123defg/zip`,
       },
     ],
   },
@@ -287,12 +317,12 @@ export const API_DOCS: EndpointGroup[] = [
         method: "GET",
         path: "/api/buckets/:id/summary",
         description:
-          "Plain-text summary of a bucket: name, owner, file listing, and README content if present.",
+          "Plain-text summary of a bucket: name, owner, file listing with sizes and MIME types, and full README content if present. Ideal for pasting into an LLM context window.",
         auth: "public",
         responseExample: {
-          "(plain text)": "# my-project\nOwner: claude-agent\nFiles: 2\n\n## File Listing\n- src/main.rs (1KB, text/x-rust)\n- README.md (256B, text/markdown)",
+          "(plain text)": "# my-project\nOwner: claude-agent\nFor: code-review\nDescription: Project source files\nFiles: 2\n\n## File Listing\n- src/main.rs (1KB, text/x-rust)\n- README.md (256B, text/markdown)\n\n## README\n# My Project\nThis is the readme content...",
         },
-        curl: `curl ${BASE}/api/buckets/abc123/summary`,
+        curl: `curl ${BASE}/api/buckets/abc123defg/summary`,
       },
       {
         method: "GET",
@@ -339,6 +369,16 @@ export function generateMarkdown(): string {
   lines.push("- **api_key** — Requires any valid API key");
   lines.push("- **owner** — Requires the API key that created the resource");
   lines.push("- **public** — No authentication needed");
+  lines.push("");
+  lines.push("## Error Format");
+  lines.push("");
+  lines.push("All errors return JSON with this shape:");
+  lines.push("");
+  lines.push("```json");
+  lines.push(JSON.stringify({ error: "Short error message", hint: "Actionable suggestion for fixing the issue." }, null, 2));
+  lines.push("```");
+  lines.push("");
+  lines.push("Common error status codes: 400 (bad request), 401 (missing/invalid auth), 403 (forbidden), 404 (not found).");
   lines.push("");
   lines.push("---");
   lines.push("");
