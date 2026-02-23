@@ -1,15 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 export type KeyRow = {
   prefix: string;
@@ -69,50 +60,51 @@ export function KeysTable({ keys: initialKeys, token }: KeysTableProps) {
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow className="border-border">
-          <TableHead className="text-text-muted">Prefix</TableHead>
-          <TableHead className="text-text-muted">Name</TableHead>
-          <TableHead className="text-text-muted">Created</TableHead>
-          <TableHead className="text-text-muted">Last Used</TableHead>
-          <TableHead className="text-text-muted">Buckets</TableHead>
-          <TableHead className="text-text-muted">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {keys.map((key) => (
-          <TableRow key={key.prefix} className="border-border">
-            <TableCell className="font-code text-accent">
-              {key.prefix}
-            </TableCell>
-            <TableCell className="text-text">{key.name}</TableCell>
-            <TableCell className="text-text-muted">
-              {relativeTime(key.createdAt)}
-            </TableCell>
-            <TableCell className="text-text-muted">
-              {relativeTime(key.lastUsedAt)}
-            </TableCell>
-            <TableCell className="text-text-muted">
-              {key.bucketCount}
-            </TableCell>
-            <TableCell>
-              {revoked === key.prefix ? (
-                <span className="text-sm text-accent">Revoked</span>
-              ) : (
-                <Button
-                  variant="destructive"
-                  size="xs"
-                  onClick={() => handleRevoke(key.prefix)}
-                  disabled={revoking === key.prefix}
-                >
-                  {revoking === key.prefix ? "Revoking..." : "Revoke"}
-                </Button>
-              )}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-border">
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Prefix</th>
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Name</th>
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Created</th>
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Last Used</th>
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Buckets</th>
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {keys.map((key) => (
+            <tr key={key.prefix} className="border-b border-border hover:bg-surface-hover/50 transition-colors">
+              <td className="px-4 py-2 font-code text-accent">
+                {key.prefix}
+              </td>
+              <td className="px-4 py-2 text-text">{key.name}</td>
+              <td className="px-4 py-2 text-text-muted">
+                {relativeTime(key.createdAt)}
+              </td>
+              <td className="px-4 py-2 text-text-muted">
+                {relativeTime(key.lastUsedAt)}
+              </td>
+              <td className="px-4 py-2 text-text-muted">
+                {key.bucketCount}
+              </td>
+              <td className="px-4 py-2">
+                {revoked === key.prefix ? (
+                  <span className="text-sm text-accent">Revoked</span>
+                ) : (
+                  <button
+                    className="btn btn-destructive btn-xs"
+                    onClick={() => handleRevoke(key.prefix)}
+                    disabled={revoking === key.prefix}
+                  >
+                    {revoking === key.prefix ? "Revoking..." : "Revoke"}
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
