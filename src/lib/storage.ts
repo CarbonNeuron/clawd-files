@@ -7,7 +7,7 @@ import {
   readFileSync,
   createReadStream,
 } from "fs";
-import { join, dirname } from "path";
+import { join, dirname, resolve } from "path";
 import type { ReadStream } from "fs";
 
 export function getDataDir(): string {
@@ -15,8 +15,12 @@ export function getDataDir(): string {
 }
 
 export function getFilePath(bucketId: string, filePath: string): string {
-  const normalized = filePath.replace(/\.\./g, "").replace(/^\/+/, "");
-  return join(getDataDir(), "files", bucketId, normalized);
+  const bucketDir = resolve(getDataDir(), "files", bucketId);
+  const fullPath = resolve(bucketDir, filePath);
+  if (!fullPath.startsWith(bucketDir + "/") && fullPath !== bucketDir) {
+    throw new Error("Path traversal detected");
+  }
+  return fullPath;
 }
 
 export async function saveFile(

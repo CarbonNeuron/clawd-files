@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, unique } from "drizzle-orm/sqlite-core";
 
 export const apiKeys = sqliteTable("api_keys", {
   key: text("key").primaryKey(),
@@ -28,4 +28,6 @@ export const files = sqliteTable("files", {
   size: integer("size").notNull(),
   mimeType: text("mime_type").notNull(),
   createdAt: integer("created_at").notNull(),
-});
+}, (table) => [
+  unique().on(table.bucketId, table.path),
+]);
