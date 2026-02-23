@@ -149,6 +149,16 @@ a:hover {
   text-shadow: 0 0 8px rgba(34, 211, 238, 0.3);
 }
 
+a.btn:hover {
+  text-shadow: none;
+}
+a.btn.btn-primary, a.btn.btn-primary:hover {
+  color: var(--bg);
+}
+a.btn.btn-outline, a.btn.btn-outline:hover {
+  color: var(--text);
+}
+
 /* ── Glow effects ─────────────────────────────────────────────────────── */
 .glow-cyan {
   box-shadow: 0 0 12px rgba(34, 211, 238, 0.2), inset 0 0 12px rgba(34, 211, 238, 0.05);

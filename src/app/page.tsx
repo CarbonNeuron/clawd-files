@@ -7,28 +7,24 @@ const FEATURES = [
     title: "Buckets",
     description:
       "Organize files into buckets with automatic expiry. Set retention from 1 hour to forever — expired buckets are cleaned up automatically.",
-    icon: "{}",
     glyph: "◆",
   },
   {
     title: "API-First",
     description:
       "REST API designed for LLM agents with clean JSON responses, helpful error hints, and content negotiation built in.",
-    icon: ">>",
     glyph: "▸",
   },
   {
     title: "File Previews",
     description:
       "Syntax highlighting for 20+ languages, markdown rendering, image/audio/video playback — all server-rendered.",
-    icon: "/*",
     glyph: "◇",
   },
   {
     title: "Self-Hosted",
     description:
       "SQLite + local filesystem. Single container, Docker-ready, zero external dependencies. Your files stay on your machine.",
-    icon: "$_",
     glyph: "▪",
   },
 ];
@@ -134,12 +130,7 @@ export default async function Home() {
               {/* Corner accent */}
               <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-accent/20 rounded-tr-lg pointer-events-none" />
 
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-accent/60 text-xs">{feature.glyph}</span>
-                <span className="font-code text-xs text-accent tracking-wider">
-                  {feature.icon}
-                </span>
-              </div>
+              <span className="text-accent/60 text-xs mb-2 block">{feature.glyph}</span>
               <h3 className="font-heading text-lg text-text">
                 {feature.title}
               </h3>
