@@ -5,7 +5,6 @@ import { buckets, files } from "@/lib/schema";
 import { isExpired } from "@/lib/expiry";
 import { eq } from "drizzle-orm";
 import { PageShell } from "@/components/page-shell";
-import { Card } from "@/components/ui/card";
 import { BucketHeader } from "@/components/bucket-header";
 import { FileTree, type FileEntry } from "@/components/file-tree";
 import { getFileBuffer } from "@/lib/storage";
@@ -130,7 +129,7 @@ export default async function BucketPage({
       />
 
       {readmeContent && (
-        <Card className="mt-8 rounded-lg border-border overflow-hidden p-0 py-0">
+        <div className="mt-8 rounded-lg border border-border overflow-hidden">
           <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-bg/30">
             <div className="flex gap-1.5">
               <span className="w-2 h-2 rounded-full bg-accent-warm/50" />
@@ -142,7 +141,7 @@ export default async function BucketPage({
           <div className="p-6">
             <MarkdownRenderer source={readmeContent} />
           </div>
-        </Card>
+        </div>
       )}
     </PageShell>
   );
