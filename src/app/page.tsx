@@ -1,31 +1,32 @@
 import { PageShell } from "@/components/page-shell";
 import { highlight } from "@/lib/highlight";
 import Link from "next/link";
+import { Archive, Zap, Eye, Server, type LucideIcon } from "lucide-react";
 
-const FEATURES = [
+const FEATURES: { title: string; description: string; icon: LucideIcon }[] = [
   {
     title: "Buckets",
     description:
       "Organize files into buckets with automatic expiry. Set retention from 1 hour to forever — expired buckets are cleaned up automatically.",
-    glyph: "◆",
+    icon: Archive,
   },
   {
     title: "API-First",
     description:
       "REST API designed for LLM agents with clean JSON responses, helpful error hints, and content negotiation built in.",
-    glyph: "▸",
+    icon: Zap,
   },
   {
     title: "File Previews",
     description:
       "Syntax highlighting for 20+ languages, markdown rendering, image/audio/video playback — all server-rendered.",
-    glyph: "◇",
+    icon: Eye,
   },
   {
     title: "Self-Hosted",
     description:
       "SQLite + local filesystem. Single container, Docker-ready, zero external dependencies. Your files stay on your machine.",
-    glyph: "▪",
+    icon: Server,
   },
 ];
 
@@ -130,8 +131,8 @@ export default async function Home() {
               {/* Corner accent */}
               <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-accent/20 rounded-tr-lg pointer-events-none" />
 
-              <span className="text-accent/60 text-xs mb-2 block">{feature.glyph}</span>
-              <h3 className="font-heading text-lg text-text">
+              <h3 className="flex items-center gap-2 font-heading text-lg text-text">
+                <feature.icon className="size-4 text-accent/70" />
                 {feature.title}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-text-muted">
