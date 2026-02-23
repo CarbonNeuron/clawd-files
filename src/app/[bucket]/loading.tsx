@@ -30,10 +30,14 @@ export default function BucketLoading() {
         <Bone className="h-9 w-32 rounded-md" />
       </div>
 
-      {/* Breadcrumb */}
-      <nav className="py-3">
+      {/* Breadcrumb + view toggle */}
+      <div className="flex items-center justify-between py-3">
         <BoneText width="w-28" className="h-4" />
-      </nav>
+        <div className="flex items-center rounded-full border border-border bg-bg/50 p-0.5">
+          <Bone className="size-6 rounded-full" />
+          <Bone className="size-6 rounded-full" />
+        </div>
+      </div>
 
       {/* File tree table */}
       <div className="rounded-lg border border-border overflow-hidden bg-surface/50">
