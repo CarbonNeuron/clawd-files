@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Folder, FileText } from "lucide-react";
+import { encodePath } from "@/lib/urls";
 
 interface FileEntry {
   path: string;
@@ -225,7 +226,7 @@ export function FileTree({
                         href={
                           entry.isFolder
                             ? `/${bucketId}?path=${encodeURIComponent(entry.path)}`
-                            : `/${bucketId}/${entry.path}`
+                            : `/${bucketId}/${encodePath(entry.path)}`
                         }
                         className="flex items-center gap-2.5 text-text hover:text-accent transition-colors"
                       >

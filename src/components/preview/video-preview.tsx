@@ -1,3 +1,4 @@
+import { encodePath } from "@/lib/urls";
 
 interface VideoPreviewProps {
   bucketId: string;
@@ -10,7 +11,7 @@ export function VideoPreview({ bucketId, filePath }: VideoPreviewProps) {
       <video
         controls
         preload="metadata"
-        src={`/raw/${bucketId}/${filePath}`}
+        src={`/raw/${bucketId}/${encodePath(filePath)}`}
         className="max-w-full rounded"
       />
     </div>

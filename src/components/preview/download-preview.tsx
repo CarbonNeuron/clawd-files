@@ -1,5 +1,6 @@
 import { Download, FileIcon } from "lucide-react";
 import { basename } from "node:path";
+import { encodePath } from "@/lib/urls";
 
 interface DownloadPreviewProps {
   bucketId: string;
@@ -33,7 +34,7 @@ export function DownloadPreview({
       <h2 className="font-heading text-xl text-text mb-2">{fileName}</h2>
       <p className="text-xs text-text-muted font-code mb-1">{mimeType}</p>
       <p className="text-xs text-text-muted font-code mb-8">{formatSize(size)}</p>
-      <a href={`/raw/${bucketId}/${filePath}`} download className="btn btn-primary btn-lg glow-cyan-hover">
+      <a href={`/raw/${bucketId}/${encodePath(filePath)}`} download className="btn btn-primary btn-lg glow-cyan-hover">
         <Download className="size-4" />
         Download File
       </a>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { secondsRemaining } from "@/lib/expiry";
 import { Download, ExternalLink } from "lucide-react";
+import { encodePath } from "@/lib/urls";
 
 interface FilePreviewProps {
   bucketId: string;
@@ -86,8 +87,8 @@ export function FilePreview({
 }: FilePreviewProps) {
   const remaining = secondsRemaining(expiresAt);
   const baseUrl = process.env.BASE_URL || "http://localhost:3000";
-  const rawUrl = `/raw/${bucketId}/${filePath}`;
-  const curlCommand = `curl -O ${baseUrl}/raw/${bucketId}/${filePath}`;
+  const rawUrl = `/raw/${bucketId}/${encodePath(filePath)}`;
+  const curlCommand = `curl -O ${baseUrl}/raw/${bucketId}/${encodePath(filePath)}`;
   const fileName = filePath.split("/").pop() || filePath;
   const ext = getExtBadge(filePath);
 

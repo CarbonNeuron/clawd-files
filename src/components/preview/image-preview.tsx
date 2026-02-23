@@ -1,4 +1,5 @@
 import { basename } from "node:path";
+import { encodePath } from "@/lib/urls";
 
 interface ImagePreviewProps {
   bucketId: string;
@@ -12,7 +13,7 @@ export function ImagePreview({ bucketId, filePath }: ImagePreviewProps) {
     <div className="flex justify-center rounded-lg border border-border bg-surface p-4">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={`/raw/${bucketId}/${filePath}`}
+        src={`/raw/${bucketId}/${encodePath(filePath)}`}
         alt={fileName}
         className="max-w-full rounded"
       />

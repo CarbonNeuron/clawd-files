@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { buckets, files } from "@/lib/schema";
 import { isExpired } from "@/lib/expiry";
 import { getFileBuffer } from "@/lib/storage";
+import { encodePath } from "@/lib/urls";
 import { renderMarkdown } from "@/lib/markdown";
 import { eq, and } from "drizzle-orm";
 import { extname } from "node:path";
@@ -73,8 +74,8 @@ export async function generateMetadata({
   const fileName = getFileName(filePath);
   const ext = extname(filePath).toLowerCase();
   const description = `${file.mimeType} · ${formatSize(file.size)} — in ${bucket.name}`;
-  const rawUrl = `${BASE_URL}/raw/${bucketId}/${filePath}`;
-  const ogCardUrl = `${BASE_URL}/api/og/${bucketId}/${filePath}`;
+  const rawUrl = `${BASE_URL}/raw/${bucketId}/${encodePath(filePath)}`;
+  const ogCardUrl = `${BASE_URL}/api/og/${bucketId}/${encodePath(filePath)}`;
 
   const metadata: Metadata = {
     title: fileName,
