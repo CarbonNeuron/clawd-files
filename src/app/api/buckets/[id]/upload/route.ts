@@ -23,6 +23,28 @@ const MIME_OVERRIDES: Record<string, string> = {
 
 const GENERIC_FIELD_NAMES = new Set(["file", "files", "upload", "uploads", "blob"]);
 
+/**
+ * Busboy decodes Content-Disposition filenames as Latin-1 per RFC 2047.
+ * Most clients (curl, browsers) send raw UTF-8 bytes without using the
+ * RFC 5987 filename* syntax, so emoji/multibyte chars get mojibake'd.
+ * Detect this and re-decode: Latin-1 string → raw bytes → UTF-8 string.
+ */
+function fixUtf8(name: string): string {
+  // If the string already has characters above the Latin-1 range (> 0xFF),
+  // it was correctly decoded (e.g. via filename*=UTF-8'') — return as-is.
+  if (/[^\x00-\xFF]/.test(name)) {
+    return name;
+  }
+  // Re-interpret the Latin-1 code points as raw bytes, then decode as UTF-8.
+  const decoded = Buffer.from(name, "latin1").toString("utf-8");
+  // If UTF-8 decoding produced replacement characters, the original was
+  // genuinely Latin-1 (e.g. accented chars) — keep the original.
+  if (decoded.includes("\uFFFD")) {
+    return name;
+  }
+  return decoded;
+}
+
 function sanitizePath(raw: string): string {
   // Remove leading slashes, collapse doubles, trim whitespace
   return raw
@@ -60,11 +82,14 @@ function parseMultipart(
     });
 
     bb.on("file", (fieldName: string, stream: Readable, info: { filename: string }) => {
+      const fixedFieldName = fixUtf8(fieldName);
+      const fixedFilename = fixUtf8(info.filename);
+
       let filePath: string;
-      if (GENERIC_FIELD_NAMES.has(fieldName.toLowerCase())) {
-        filePath = info.filename || fieldName;
+      if (GENERIC_FIELD_NAMES.has(fixedFieldName.toLowerCase())) {
+        filePath = fixedFilename || fixedFieldName;
       } else {
-        filePath = fieldName;
+        filePath = fixedFieldName;
       }
 
       filePath = sanitizePath(filePath);

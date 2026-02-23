@@ -80,11 +80,18 @@ export async function GET(
     cacheControl = `public, max-age=${remaining}`;
   }
 
+  // Use RFC 5987 filename* for non-ASCII filenames (emoji, unicode, etc.)
+  // ASCII-only filenames use the simple filename="..." form.
+  const isAscii = /^[\x20-\x7E]*$/.test(fileName);
+  const disposition = isAscii
+    ? `inline; filename="${fileName}"`
+    : `inline; filename="${encodeURIComponent(fileName)}"; filename*=UTF-8''${encodeURIComponent(fileName)}`;
+
   return new Response(fileBuffer, {
     status: 200,
     headers: {
       "Content-Type": file.mimeType,
-      "Content-Disposition": `inline; filename="${fileName}"`,
+      "Content-Disposition": disposition,
       "Content-Length": String(file.size),
       "Cache-Control": cacheControl,
     },
