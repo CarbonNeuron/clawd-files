@@ -2,16 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 export type BucketRow = {
   id: string;
@@ -115,66 +105,64 @@ export function BucketsTable({
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow className="border-border">
-          <TableHead className="text-text-muted">ID</TableHead>
-          <TableHead className="text-text-muted">Name</TableHead>
-          <TableHead className="text-text-muted">Owner</TableHead>
-          <TableHead className="text-text-muted">Files</TableHead>
-          <TableHead className="text-text-muted">Created</TableHead>
-          <TableHead className="text-text-muted">Expires</TableHead>
-          <TableHead className="text-text-muted">Status</TableHead>
-          <TableHead className="text-text-muted">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {buckets.map((bucket) => {
-          const status = getStatus(bucket.expiresAt);
-          return (
-            <TableRow key={bucket.id} className="border-border">
-              <TableCell className="font-code text-accent">
-                <Link href={`/${bucket.id}`} title={bucket.id}>
-                  {bucket.id.slice(0, 8)}...
-                </Link>
-              </TableCell>
-              <TableCell className="text-text">{bucket.name}</TableCell>
-              <TableCell className="text-text-muted">{bucket.owner}</TableCell>
-              <TableCell className="text-text-muted">
-                {bucket.fileCount}
-              </TableCell>
-              <TableCell className="text-text-muted">
-                {relativeTime(bucket.createdAt)}
-              </TableCell>
-              <TableCell className="text-text-muted">
-                {bucket.expiresAt ? relativeTime(bucket.expiresAt) : "Never"}
-              </TableCell>
-              <TableCell>
-                <Badge
-                  variant="outline"
-                  className={`rounded-md border text-xs ${status.className}`}
-                >
-                  {status.label}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                {deleted === bucket.id ? (
-                  <span className="text-sm text-accent">Deleted</span>
-                ) : (
-                  <Button
-                    variant="destructive"
-                    size="xs"
-                    onClick={() => handleDelete(bucket.id)}
-                    disabled={deleting === bucket.id}
-                  >
-                    {deleting === bucket.id ? "Deleting..." : "Delete"}
-                  </Button>
-                )}
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-border">
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">ID</th>
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Name</th>
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Owner</th>
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Files</th>
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Created</th>
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Expires</th>
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Status</th>
+            <th className="text-left text-xs text-text-muted font-code uppercase tracking-wider px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {buckets.map((bucket) => {
+            const status = getStatus(bucket.expiresAt);
+            return (
+              <tr key={bucket.id} className="border-b border-border hover:bg-surface-hover/50 transition-colors">
+                <td className="px-4 py-2 font-code text-accent">
+                  <Link href={`/${bucket.id}`} title={bucket.id}>
+                    {bucket.id.slice(0, 8)}...
+                  </Link>
+                </td>
+                <td className="px-4 py-2 text-text">{bucket.name}</td>
+                <td className="px-4 py-2 text-text-muted">{bucket.owner}</td>
+                <td className="px-4 py-2 text-text-muted">
+                  {bucket.fileCount}
+                </td>
+                <td className="px-4 py-2 text-text-muted">
+                  {relativeTime(bucket.createdAt)}
+                </td>
+                <td className="px-4 py-2 text-text-muted">
+                  {bucket.expiresAt ? relativeTime(bucket.expiresAt) : "Never"}
+                </td>
+                <td className="px-4 py-2">
+                  <span className={`inline-flex items-center rounded-md border text-xs px-2 py-0.5 font-code ${status.className}`}>
+                    {status.label}
+                  </span>
+                </td>
+                <td className="px-4 py-2">
+                  {deleted === bucket.id ? (
+                    <span className="text-sm text-accent">Deleted</span>
+                  ) : (
+                    <button
+                      className="btn btn-destructive btn-xs"
+                      onClick={() => handleDelete(bucket.id)}
+                      disabled={deleting === bucket.id}
+                    >
+                      {deleting === bucket.id ? "Deleting..." : "Delete"}
+                    </button>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
