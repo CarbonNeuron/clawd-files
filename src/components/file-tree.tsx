@@ -1,22 +1,4 @@
 import Link from "next/link";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Folder, FileText } from "lucide-react";
 
 interface FileEntry {
@@ -158,35 +140,34 @@ function Breadcrumbs({
     : [];
 
   return (
-    <Breadcrumb className="py-3 overflow-x-auto font-code">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild className="text-accent hover:text-accent/80">
-            <Link href={`/${bucketId}`}>{bucketName}</Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
+    <nav aria-label="Breadcrumb" className="py-3 overflow-x-auto font-code">
+      <ol className="flex items-center gap-1.5 text-sm">
+        <li>
+          <Link href={`/${bucketId}`} className="text-accent hover:text-accent/80">
+            {bucketName}
+          </Link>
+        </li>
         {segments.map((segment, i) => {
           const path = segments.slice(0, i + 1).join("/") + "/";
           const isLast = i === segments.length - 1;
           return (
-            <span key={path} className="contents">
-              <BreadcrumbSeparator className="text-text-muted/50" />
-              <BreadcrumbItem>
-                {isLast ? (
-                  <BreadcrumbPage className="text-text">{segment}</BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink asChild className="text-accent hover:text-accent/80">
-                    <Link href={`/${bucketId}?path=${encodeURIComponent(path)}`}>
-                      {segment}
-                    </Link>
-                  </BreadcrumbLink>
-                )}
-              </BreadcrumbItem>
-            </span>
+            <li key={path} className="flex items-center gap-1.5">
+              <span className="text-text-muted/50">/</span>
+              {isLast ? (
+                <span className="text-text" aria-current="page">{segment}</span>
+              ) : (
+                <Link
+                  href={`/${bucketId}?path=${encodeURIComponent(path)}`}
+                  className="text-accent hover:text-accent/80"
+                >
+                  {segment}
+                </Link>
+              )}
+            </li>
           );
         })}
-      </BreadcrumbList>
-    </Breadcrumb>
+      </ol>
+    </nav>
   );
 }
 
@@ -206,79 +187,81 @@ export function FileTree({
         currentPath={currentPath}
       />
 
-      <Card className="rounded-lg border-border overflow-hidden bg-surface/50 p-0 py-0">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-border hover:bg-transparent bg-bg/30">
-              <TableHead className="text-text-muted font-code text-xs uppercase tracking-wider">Name</TableHead>
-              <TableHead className="text-text-muted w-20 text-right font-code text-xs uppercase tracking-wider hidden sm:table-cell">
-                Type
-              </TableHead>
-              <TableHead className="text-text-muted w-24 text-right font-code text-xs uppercase tracking-wider">
-                Size
-              </TableHead>
-              <TableHead className="text-text-muted w-44 text-right font-code text-xs uppercase tracking-wider hidden md:table-cell">
-                Modified
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {entries.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="text-center text-text-muted py-12 font-code text-sm"
-                >
-                  No files in this directory
-                </TableCell>
-              </TableRow>
-            ) : (
-              entries.map((entry) => (
-                <TableRow
-                  key={entry.path}
-                  className="border-border/50 hover:bg-surface-hover/50 transition-colors"
-                >
-                  <TableCell>
-                    <Link
-                      href={
-                        entry.isFolder
-                          ? `/${bucketId}?path=${encodeURIComponent(entry.path)}`
-                          : `/${bucketId}/${entry.path}`
-                      }
-                      className="flex items-center gap-2.5 text-text hover:text-accent transition-colors"
-                    >
-                      {entry.isFolder ? (
-                        <Folder className="size-4 text-accent-warm shrink-0" />
-                      ) : (
-                        <FileText className="size-4 text-text-muted/60 shrink-0" />
-                      )}
-                      <span className="font-code text-sm">
-                        {entry.name}
-                        {entry.isFolder ? "/" : ""}
-                      </span>
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-right hidden sm:table-cell">
-                    {!entry.isFolder && getExtBadge(entry.name) ? (
-                      <Badge variant="outline" className="rounded px-1.5 py-0.5 text-[10px] font-code font-medium bg-accent-warm/10 text-accent-warm border-accent-warm/20">
-                        {getExtBadge(entry.name)}
-                      </Badge>
-                    ) : entry.isFolder ? (
-                      <span className="text-xs text-text-muted/50 font-code">dir</span>
-                    ) : null}
-                  </TableCell>
-                  <TableCell className="text-right text-text-muted font-code text-xs">
-                    {entry.isFolder ? "—" : formatSize(entry.size)}
-                  </TableCell>
-                  <TableCell className="text-right text-text-muted font-code text-xs hidden md:table-cell">
-                    {formatDate(entry.createdAt)}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </Card>
+      <div className="rounded-lg border border-border overflow-hidden bg-surface/50">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-bg/30">
+                <th className="text-left text-text-muted font-code text-xs uppercase tracking-wider px-4 py-2">Name</th>
+                <th className="text-left text-text-muted w-20 text-right font-code text-xs uppercase tracking-wider hidden sm:table-cell px-4 py-2">
+                  Type
+                </th>
+                <th className="text-left text-text-muted w-24 text-right font-code text-xs uppercase tracking-wider px-4 py-2">
+                  Size
+                </th>
+                <th className="text-left text-text-muted w-44 text-right font-code text-xs uppercase tracking-wider hidden md:table-cell px-4 py-2">
+                  Modified
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {entries.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="px-4 py-2 text-center text-text-muted py-12 font-code text-sm"
+                  >
+                    No files in this directory
+                  </td>
+                </tr>
+              ) : (
+                entries.map((entry) => (
+                  <tr
+                    key={entry.path}
+                    className="border-b border-border/50 hover:bg-surface-hover/50 transition-colors"
+                  >
+                    <td className="px-4 py-2">
+                      <Link
+                        href={
+                          entry.isFolder
+                            ? `/${bucketId}?path=${encodeURIComponent(entry.path)}`
+                            : `/${bucketId}/${entry.path}`
+                        }
+                        className="flex items-center gap-2.5 text-text hover:text-accent transition-colors"
+                      >
+                        {entry.isFolder ? (
+                          <Folder className="size-4 text-accent-warm shrink-0" />
+                        ) : (
+                          <FileText className="size-4 text-text-muted/60 shrink-0" />
+                        )}
+                        <span className="font-code text-sm">
+                          {entry.name}
+                          {entry.isFolder ? "/" : ""}
+                        </span>
+                      </Link>
+                    </td>
+                    <td className="px-4 py-2 text-right hidden sm:table-cell">
+                      {!entry.isFolder && getExtBadge(entry.name) ? (
+                        <span className="inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-code font-medium bg-accent-warm/10 text-accent-warm border-accent-warm/20">
+                          {getExtBadge(entry.name)}
+                        </span>
+                      ) : entry.isFolder ? (
+                        <span className="text-xs text-text-muted/50 font-code">dir</span>
+                      ) : null}
+                    </td>
+                    <td className="px-4 py-2 text-right text-text-muted font-code text-xs">
+                      {entry.isFolder ? "\u2014" : formatSize(entry.size)}
+                    </td>
+                    <td className="px-4 py-2 text-right text-text-muted font-code text-xs hidden md:table-cell">
+                      {formatDate(entry.createdAt)}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
