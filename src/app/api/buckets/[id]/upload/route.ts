@@ -8,18 +8,10 @@ import { isExpired } from "@/lib/expiry";
 import { saveFileStream } from "@/lib/storage";
 import { fileUrl } from "@/lib/urls";
 import { lookup } from "mime-types";
+import { MIME_OVERRIDES } from "@/lib/mime";
 import { eq, and } from "drizzle-orm";
 
 export const runtime = 'nodejs';
-
-// Override MIME types that the `mime-types` library gets wrong.
-// Notably, .ts is detected as video/mp2t (MPEG-2 Transport Stream).
-const MIME_OVERRIDES: Record<string, string> = {
-  ".ts": "text/typescript",
-  ".tsx": "text/typescript-jsx",
-  ".mts": "text/typescript",
-  ".cts": "text/typescript",
-};
 
 const GENERIC_FIELD_NAMES = new Set(["file", "files", "upload", "uploads", "blob"]);
 

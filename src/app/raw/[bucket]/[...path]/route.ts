@@ -3,6 +3,7 @@ import { buckets, files } from "@/lib/schema";
 import { isExpired, secondsRemaining } from "@/lib/expiry";
 import { jsonError, jsonNotFound } from "@/lib/response";
 import { getFilePath } from "@/lib/storage";
+import { correctMimeType } from "@/lib/mime";
 import { eq, and } from "drizzle-orm";
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { basename } from "node:path";
@@ -118,8 +119,10 @@ export async function GET(
     ? `inline; filename="${fileName}"`
     : `inline; filename="${encodeURIComponent(fileName)}"; filename*=UTF-8''${encodeURIComponent(fileName)}`;
 
+  const mimeType = correctMimeType(filePath, file.mimeType);
+
   const commonHeaders: Record<string, string> = {
-    "Content-Type": file.mimeType,
+    "Content-Type": mimeType,
     "Content-Disposition": disposition,
     "Accept-Ranges": "bytes",
     "Cache-Control": cacheControl,

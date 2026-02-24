@@ -2,6 +2,7 @@ import { ImageResponse } from "@vercel/og";
 import { db } from "@/lib/db";
 import { buckets, files } from "@/lib/schema";
 import { isExpired } from "@/lib/expiry";
+import { correctMimeType } from "@/lib/mime";
 import { eq, and } from "drizzle-orm";
 
 export const runtime = "nodejs";
@@ -47,7 +48,8 @@ export async function GET(
   }
 
   const fileName = getFileName(filePath);
-  const subtitle = `${file.mimeType} · ${formatSize(file.size)}`;
+  const mimeType = correctMimeType(filePath, file.mimeType);
+  const subtitle = `${mimeType} · ${formatSize(file.size)}`;
 
   return new ImageResponse(
     (

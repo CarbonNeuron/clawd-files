@@ -5,6 +5,7 @@ import { jsonSuccess, jsonError, jsonNotFound } from "@/lib/response";
 import { isExpired, parseExpiry } from "@/lib/expiry";
 import { bucketUrl, fileUrl } from "@/lib/urls";
 import { deleteBucket } from "@/lib/storage";
+import { correctMimeType } from "@/lib/mime";
 import { eq } from "drizzle-orm";
 
 export const runtime = 'nodejs';
@@ -41,7 +42,7 @@ export async function GET(
     files: bucketFiles.map((f) => ({
       path: f.path,
       size: f.size,
-      mime_type: f.mimeType,
+      mime_type: correctMimeType(f.path, f.mimeType),
       created_at: f.createdAt,
       ...fileUrl(bucket.id, f.path),
     })),

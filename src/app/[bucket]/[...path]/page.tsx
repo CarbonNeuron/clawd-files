@@ -7,6 +7,7 @@ import { getFileBuffer } from "@/lib/storage";
 import { encodePath } from "@/lib/urls";
 import { renderMarkdown } from "@/lib/markdown";
 import { eq, and } from "drizzle-orm";
+import { correctMimeType } from "@/lib/mime";
 import { extname } from "node:path";
 import { PageShell } from "@/components/page-shell";
 import { FilePreview } from "@/components/file-preview";
@@ -73,7 +74,8 @@ export async function generateMetadata({
 
   const fileName = getFileName(filePath);
   const ext = extname(filePath).toLowerCase();
-  const description = `${file.mimeType} · ${formatSize(file.size)} — in ${bucket.name}`;
+  const mimeType = correctMimeType(filePath, file.mimeType);
+  const description = `${mimeType} · ${formatSize(file.size)} — in ${bucket.name}`;
   const rawUrl = `${BASE_URL}/raw/${bucketId}/${encodePath(filePath)}`;
   const ogCardUrl = `${BASE_URL}/api/og/${bucketId}/${encodePath(filePath)}`;
 
@@ -201,7 +203,8 @@ export default async function FilePreviewPage({
     notFound();
   }
 
-  const previewType = detectPreviewType(filePath, file.mimeType);
+  const mimeType = correctMimeType(filePath, file.mimeType);
+  const previewType = detectPreviewType(filePath, mimeType);
 
   // Read text content for text-based previews
   let textContent: string | null = null;
@@ -224,7 +227,7 @@ export default async function FilePreviewPage({
         bucketId={bucket.id}
         bucketName={bucket.name}
         filePath={filePath}
-        mimeType={file.mimeType}
+        mimeType={mimeType}
         size={file.size}
         expiresAt={bucket.expiresAt}
       >
@@ -256,7 +259,7 @@ export default async function FilePreviewPage({
           <DownloadPreview
             bucketId={bucket.id}
             filePath={filePath}
-            mimeType={file.mimeType}
+            mimeType={mimeType}
             size={file.size}
           />
         )}

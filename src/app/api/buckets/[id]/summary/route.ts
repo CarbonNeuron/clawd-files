@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { buckets, files } from "@/lib/schema";
 import { isExpired } from "@/lib/expiry";
 import { getFileBuffer } from "@/lib/storage";
+import { correctMimeType } from "@/lib/mime";
 import { eq } from "drizzle-orm";
 
 export const runtime = 'nodejs';
@@ -47,7 +48,7 @@ export async function GET(
 
   lines.push("## File Listing");
   for (const f of bucketFiles) {
-    lines.push(`- ${f.path} (${formatSize(f.size)}, ${f.mimeType})`);
+    lines.push(`- ${f.path} (${formatSize(f.size)}, ${correctMimeType(f.path, f.mimeType)})`);
   }
 
   // Check for README.md
