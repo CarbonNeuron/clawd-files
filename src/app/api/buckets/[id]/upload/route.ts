@@ -2,7 +2,7 @@ import { Readable } from "node:stream";
 import Busboy from "busboy";
 import { db } from "@/lib/db";
 import { buckets, files } from "@/lib/schema";
-import { authenticate, AuthError } from "@/lib/auth";
+import { authenticate, AuthError, verifyUploadToken } from "@/lib/auth";
 import { jsonSuccess, jsonError, jsonNotFound } from "@/lib/response";
 import { isExpired } from "@/lib/expiry";
 import { saveFileStream } from "@/lib/storage";
@@ -140,22 +140,52 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const auth = await authenticate(request);
     const { id } = await params;
 
+    // Auth: token OR API key
+    const url = new URL(request.url);
+    const token = url.searchParams.get("token");
+
+    if (token) {
+      const result = verifyUploadToken(token);
+      if (!result) {
+        return jsonError(
+          "Invalid or expired upload token",
+          "The upload link has expired or is invalid. Request a new one.",
+          401,
+        );
+      }
+      if (result.bucketId !== id) {
+        return jsonError(
+          "Token mismatch",
+          "This upload token is not valid for this bucket.",
+          403,
+        );
+      }
+    } else {
+      const auth = await authenticate(request);
+      const bucket = db.select().from(buckets).where(eq(buckets.id, id)).get();
+      if (!bucket || isExpired(bucket.expiresAt)) {
+        return jsonNotFound(
+          "Bucket not found",
+          "This bucket does not exist or has expired.",
+        );
+      }
+      if (auth.type !== "admin" && auth.keyHash !== bucket.keyHash) {
+        return jsonError(
+          "Forbidden",
+          "You can only upload to buckets you own.",
+          403,
+        );
+      }
+    }
+
+    // Verify bucket exists (for both auth paths)
     const bucket = db.select().from(buckets).where(eq(buckets.id, id)).get();
     if (!bucket || isExpired(bucket.expiresAt)) {
       return jsonNotFound(
         "Bucket not found",
         "This bucket does not exist or has expired.",
-      );
-    }
-
-    if (auth.type !== "admin" && auth.keyHash !== bucket.keyHash) {
-      return jsonError(
-        "Forbidden",
-        "You can only upload to buckets you own.",
-        403,
       );
     }
 
@@ -169,11 +199,7 @@ export async function POST(
     }
 
     if (!request.body) {
-      return jsonError(
-        "No body",
-        "Request body is empty.",
-        400,
-      );
+      return jsonError("No body", "Request body is empty.", 400);
     }
 
     let uploaded: UploadedFile[];
