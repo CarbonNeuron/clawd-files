@@ -96,7 +96,8 @@ export function verifyDashboardToken(token: string): boolean {
 }
 
 export function generateUploadToken(bucketId: string, validHours: number = 1): string {
-  const adminKey = process.env.ADMIN_API_KEY!;
+  const adminKey = process.env.ADMIN_API_KEY;
+  if (!adminKey) throw new Error("ADMIN_API_KEY not set");
   const expiresAt = Math.floor(Date.now() / 1000) + validHours * 3600;
   const payload = `${bucketId}:${expiresAt}`;
   const signature = createHmac("sha256", adminKey)
