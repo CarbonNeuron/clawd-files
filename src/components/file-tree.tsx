@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Folder, FileText, List, LayoutGrid } from "lucide-react";
 import { encodePath } from "@/lib/urls";
@@ -362,7 +362,15 @@ export function FileTree({
   files,
   currentPath,
 }: FileTreeProps) {
-  const [view, setView] = useState<"list" | "grid">("list");
+  const [view, setView] = useState<"list" | "grid">(() => {
+    if (typeof window === "undefined") return "list";
+    const stored = localStorage.getItem("clawd-view");
+    return stored === "grid" ? "grid" : "list";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("clawd-view", view);
+  }, [view]);
   const entries = buildTreeEntries(files, currentPath);
 
   return (
