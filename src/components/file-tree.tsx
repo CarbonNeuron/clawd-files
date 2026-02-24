@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Folder, FileText, List, LayoutGrid } from "lucide-react";
 import { encodePath } from "@/lib/urls";
@@ -15,11 +15,14 @@ interface FileEntry {
   createdAt: number;
 }
 
+type ViewMode = "list" | "grid";
+
 interface FileTreeProps {
   bucketId: string;
   bucketName: string;
   files: FileEntry[];
   currentPath: string;
+  initialView?: ViewMode;
 }
 
 function formatSize(bytes: number): string {
@@ -356,21 +359,23 @@ function GridView({
   );
 }
 
+function setViewCookie(view: ViewMode) {
+  document.cookie = `clawd-view=${view};path=/;max-age=31536000;SameSite=Lax`;
+}
+
 export function FileTree({
   bucketId,
   bucketName,
   files,
   currentPath,
+  initialView = "list",
 }: FileTreeProps) {
-  const [view, setView] = useState<"list" | "grid">(() => {
-    if (typeof window === "undefined") return "list";
-    const stored = localStorage.getItem("clawd-view");
-    return stored === "grid" ? "grid" : "list";
-  });
+  const [view, setView] = useState<ViewMode>(initialView);
 
-  useEffect(() => {
-    localStorage.setItem("clawd-view", view);
-  }, [view]);
+  function handleSetView(v: ViewMode) {
+    setView(v);
+    setViewCookie(v);
+  }
   const entries = buildTreeEntries(files, currentPath);
 
   return (
@@ -383,7 +388,7 @@ export function FileTree({
         />
         <div className="flex items-center rounded-full border border-border bg-bg/50 p-0.5 shrink-0 ml-3">
           <button
-            onClick={() => setView("list")}
+            onClick={() => handleSetView("list")}
             className={`rounded-full p-1.5 transition-colors ${
               view === "list"
                 ? "bg-surface text-accent shadow-sm"
@@ -394,7 +399,7 @@ export function FileTree({
             <List className="size-3.5" />
           </button>
           <button
-            onClick={() => setView("grid")}
+            onClick={() => handleSetView("grid")}
             className={`rounded-full p-1.5 transition-colors ${
               view === "grid"
                 ? "bg-surface text-accent shadow-sm"

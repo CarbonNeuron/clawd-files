@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { buckets, files } from "@/lib/schema";
 import { isExpired } from "@/lib/expiry";
@@ -101,6 +102,10 @@ export default async function BucketPage({
 
   const normalizedPath = currentPath || "";
 
+  const cookieStore = await cookies();
+  const viewPref = cookieStore.get("clawd-view")?.value;
+  const initialView = viewPref === "grid" ? "grid" : "list";
+
   return (
     <PageShell>
       <BucketHeader
@@ -117,6 +122,7 @@ export default async function BucketPage({
         bucketName={bucket.name}
         files={fileEntries}
         currentPath={normalizedPath}
+        initialView={initialView}
       />
 
       <Suspense
