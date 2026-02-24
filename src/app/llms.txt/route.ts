@@ -48,13 +48,10 @@ Create a new API key.
 Response (201):
 
     {
-      "ok": true,
-      "data": {
-        "key": "cf_a1b2c3d4e5f6...",
-        "prefix": "cf_a1b2c",
-        "name": "claude-agent",
-        "created_at": 1700000000
-      }
+      "key": "cf_a1b2c3d4e5f6...",
+      "prefix": "cf_a1b2c",
+      "name": "claude-agent",
+      "created_at": 1700000000
     }
 
 #### GET ${baseUrl}/api/keys
@@ -91,18 +88,15 @@ The "owner" field is auto-populated from the API key's name — do not send it.
 Response (201):
 
     {
-      "ok": true,
-      "data": {
-        "id": "abc123defg",
-        "name": "my-project",
-        "owner": "claude-agent",
-        "description": "Project source files",
-        "for": "code-review",
-        "created_at": 1700000000,
-        "expires_at": 1700604800,
-        "url": "${baseUrl}/abc123defg",
-        "api_url": "${baseUrl}/api/buckets/abc123defg"
-      }
+      "id": "abc123defg",
+      "name": "my-project",
+      "owner": "claude-agent",
+      "description": "Project source files",
+      "for": "code-review",
+      "created_at": 1700000000,
+      "expires_at": 1700604800,
+      "url": "${baseUrl}/abc123defg",
+      "api_url": "${baseUrl}/api/buckets/abc123defg"
     }
 
 #### GET ${baseUrl}/api/buckets
@@ -118,30 +112,27 @@ Get bucket details and full file listing. Public — no auth required.
 Response (200):
 
     {
-      "ok": true,
-      "data": {
-        "id": "abc123defg",
-        "name": "my-project",
-        "owner": "claude-agent",
-        "description": "Project source files",
-        "for": "code-review",
-        "created_at": 1700000000,
-        "expires_at": 1700604800,
-        "url": "${baseUrl}/abc123defg",
-        "api_url": "${baseUrl}/api/buckets/abc123defg",
-        "files": [
-          {
-            "path": "src/main.rs",
-            "size": 1234,
-            "mime_type": "text/x-rust",
-            "created_at": 1700000000,
-            "url": "${baseUrl}/abc123defg/src/main.rs",
-            "raw_url": "${baseUrl}/raw/abc123defg/src/main.rs",
-            "short_url": "${baseUrl}/s/xK9mQ2",
-            "api_url": "${baseUrl}/api/buckets/abc123defg"
-          }
-        ]
-      }
+      "id": "abc123defg",
+      "name": "my-project",
+      "owner": "claude-agent",
+      "description": "Project source files",
+      "for": "code-review",
+      "created_at": 1700000000,
+      "expires_at": 1700604800,
+      "url": "${baseUrl}/abc123defg",
+      "api_url": "${baseUrl}/api/buckets/abc123defg",
+      "files": [
+        {
+          "path": "src/main.rs",
+          "size": 1234,
+          "mime_type": "text/x-rust",
+          "created_at": 1700000000,
+          "url": "${baseUrl}/abc123defg/src/main.rs",
+          "raw_url": "${baseUrl}/raw/abc123defg/src/main.rs",
+          "short_url": "${baseUrl}/s/xK9mQ2",
+          "api_url": "${baseUrl}/api/buckets/abc123defg"
+        }
+      ]
     }
 
 #### PATCH ${baseUrl}/api/buckets/{id}
@@ -186,29 +177,26 @@ Re-uploading the same path overwrites the existing file.
 Response (201):
 
     {
-      "ok": true,
-      "data": {
-        "uploaded": [
-          {
-            "path": "screenshot.png",
-            "size": 48210,
-            "mime_type": "image/png",
-            "url": "${baseUrl}/abc123defg/screenshot.png",
-            "raw_url": "${baseUrl}/raw/abc123defg/screenshot.png",
-            "short_url": "${baseUrl}/s/xK9mQ2",
-            "api_url": "${baseUrl}/api/buckets/abc123defg"
-          },
-          {
-            "path": "README.md",
-            "size": 256,
-            "mime_type": "text/markdown",
-            "url": "${baseUrl}/abc123defg/README.md",
-            "raw_url": "${baseUrl}/raw/abc123defg/README.md",
-            "short_url": "${baseUrl}/s/pL3nR7",
-            "api_url": "${baseUrl}/api/buckets/abc123defg"
-          }
-        ]
-      }
+      "uploaded": [
+        {
+          "path": "screenshot.png",
+          "size": 48210,
+          "mime_type": "image/png",
+          "url": "${baseUrl}/abc123defg/screenshot.png",
+          "raw_url": "${baseUrl}/raw/abc123defg/screenshot.png",
+          "short_url": "${baseUrl}/s/xK9mQ2",
+          "api_url": "${baseUrl}/api/buckets/abc123defg"
+        },
+        {
+          "path": "README.md",
+          "size": 256,
+          "mime_type": "text/markdown",
+          "url": "${baseUrl}/abc123defg/README.md",
+          "raw_url": "${baseUrl}/raw/abc123defg/README.md",
+          "short_url": "${baseUrl}/s/pL3nR7",
+          "api_url": "${baseUrl}/api/buckets/abc123defg"
+        }
+      ]
     }
 
 #### DELETE ${baseUrl}/api/buckets/{id}/files
@@ -221,7 +209,7 @@ Delete a specific file by path. Owner or admin only.
 
 Response (200):
 
-    {"ok": true, "data": {"deleted": true, "path": "src/main.rs"}}
+    {"deleted": true, "path": "src/main.rs"}
 
 ---
 
