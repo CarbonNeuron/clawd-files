@@ -309,25 +309,29 @@ function GridView({
             prefetch={false}
             className="group rounded-lg border border-border bg-surface/50 overflow-hidden hover:border-accent/30 transition-colors"
           >
-            <div className="aspect-square bg-bg/30 flex items-center justify-center overflow-hidden">
+            <div className="aspect-square bg-bg/30 relative overflow-hidden">
               {entry.isFolder ? (
-                <Folder className="size-12 text-accent-warm/70" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Folder className="size-12 text-accent-warm/70" />
+                </div>
               ) : isImage ? (
                 <img
                   src={rawUrl}
                   alt={entry.name}
                   loading="lazy"
-                  className="w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
               ) : isVideo ? (
                 <video
                   src={rawUrl}
                   preload="metadata"
                   muted
-                  className="w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
               ) : (
-                <FileText className="size-12 text-text-muted/40" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <FileText className="size-12 text-text-muted/40" />
+                </div>
               )}
             </div>
             <div className="px-2.5 py-2 space-y-0.5">
