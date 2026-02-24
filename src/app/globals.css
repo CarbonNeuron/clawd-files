@@ -327,6 +327,11 @@ pre, code, kbd {
   font-size: 0.875em;
 }
 
+.prose :where(code):not(:where(pre code))::before,
+.prose :where(code):not(:where(pre code))::after {
+  content: none;
+}
+
 .prose a {
   color: var(--accent);
   text-decoration: underline;

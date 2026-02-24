@@ -191,7 +191,7 @@ async function ReadmeSection({
         <span className="ml-1 text-[11px] text-text-muted/60 font-code">README.md</span>
       </div>
       <div className="p-6">
-        <MarkdownRenderer source={readmeContent} />
+        <MarkdownRenderer source={readmeContent} basePath={`/${bucketId}/${currentPath}`} />
       </div>
     </div>
   );

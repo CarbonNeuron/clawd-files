@@ -19,9 +19,27 @@ function decodeHtmlEntities(html: string): string {
 }
 
 /**
- * Render markdown source to HTML with GFM support and Shiki-highlighted code blocks.
+ * Rewrite relative URLs in rendered HTML so they resolve against a base path
+ * instead of the page root. Handles href and src attributes.
  */
-export async function renderMarkdown(source: string): Promise<string> {
+function rewriteRelativeUrls(html: string, basePath: string): string {
+  return html.replace(
+    /(<(?:a|img)\s[^>]*?(?:href|src))="([^"]*?)"/gi,
+    (match, prefix: string, url: string) => {
+      // Skip absolute URLs, protocol-relative, anchors, and data URIs
+      if (/^(?:[a-z][a-z0-9+.-]*:|\/\/|#|data:)/i.test(url)) return match;
+      // Skip already-absolute paths
+      if (url.startsWith("/")) return match;
+      return `${prefix}="${basePath}${url}"`;
+    },
+  );
+}
+
+/**
+ * Render markdown source to HTML with GFM support and Shiki-highlighted code blocks.
+ * If basePath is provided, relative links/images are rewritten to resolve against it.
+ */
+export async function renderMarkdown(source: string, basePath?: string): Promise<string> {
   // Step 1: Render markdown to HTML using unified pipeline
   const result = await unified()
     .use(remarkParse)
@@ -56,6 +74,11 @@ export async function renderMarkdown(source: string): Promise<string> {
   for (const { fullMatch, lang, code } of matches) {
     const highlighted = await highlight(code, lang);
     html = html.replace(fullMatch, highlighted);
+  }
+
+  // Step 4: Rewrite relative URLs if a base path is provided
+  if (basePath) {
+    html = rewriteRelativeUrls(html, basePath);
   }
 
   return html;

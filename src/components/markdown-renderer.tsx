@@ -2,6 +2,7 @@ import { renderMarkdown } from "@/lib/markdown";
 
 interface MarkdownRendererProps {
   source: string;
+  basePath?: string;
 }
 
 /**
@@ -9,8 +10,8 @@ interface MarkdownRendererProps {
  * Uses unified/remark/rehype pipeline with Shiki syntax highlighting.
  * Content is rendered server-side from files stored in the bucket.
  */
-export async function MarkdownRenderer({ source }: MarkdownRendererProps) {
-  const html = await renderMarkdown(source);
+export async function MarkdownRenderer({ source, basePath }: MarkdownRendererProps) {
+  const html = await renderMarkdown(source, basePath);
 
   return (
     <div
