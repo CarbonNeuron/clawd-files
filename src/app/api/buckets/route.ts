@@ -1,9 +1,9 @@
 import { nanoid } from "nanoid";
 import { db } from "@/lib/db";
 import { buckets } from "@/lib/schema";
-import { authenticate, AuthError } from "@/lib/auth";
+import { authenticate, AuthError, generateUploadToken } from "@/lib/auth";
 import { jsonSuccess, jsonError } from "@/lib/response";
-import { parseExpiry, isExpired } from "@/lib/expiry";
+import { parseExpiry, isExpired, expiryToHours } from "@/lib/expiry";
 import { bucketUrl } from "@/lib/urls";
 import { eq, or, isNull, gt, sql } from "drizzle-orm";
 
@@ -64,6 +64,19 @@ export async function POST(request: Request) {
 
     const urls = bucketUrl(id);
 
+    // Optionally generate an upload link
+    let uploadUrl: string | undefined;
+    if (body && (body as Record<string, unknown>).generate_upload_link) {
+      const uploadExpiresIn =
+        typeof (body as Record<string, unknown>).upload_link_expires_in === "string"
+          ? ((body as Record<string, unknown>).upload_link_expires_in as string)
+          : "1h";
+      const hours = expiryToHours(uploadExpiresIn);
+      const token = generateUploadToken(id, hours);
+      const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+      uploadUrl = `${baseUrl}/upload/${id}?token=${token}`;
+    }
+
     return jsonSuccess(
       {
         id,
@@ -75,6 +88,7 @@ export async function POST(request: Request) {
         created_at: now,
         expires_at: expiresAt,
         ...urls,
+        ...(uploadUrl ? { upload_url: uploadUrl } : {}),
       },
       201,
     );
