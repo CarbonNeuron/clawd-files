@@ -32,3 +32,27 @@ export function secondsRemaining(expiresAt: number | null): number | null {
   if (expiresAt === null) return null;
   return Math.max(0, expiresAt - Math.floor(Date.now() / 1000));
 }
+
+const EXPIRY_HOURS: Record<string, number> = {
+  "1h": 1,
+  "6h": 6,
+  "12h": 12,
+  "1d": 24,
+  "3d": 72,
+  "1w": 168,
+  "2w": 336,
+  "1m": 720,
+};
+
+/**
+ * Convert an expiry preset string to hours. Returns 1 (hour) as default.
+ * Used for upload token expiry (not bucket expiry).
+ */
+export function expiryToHours(input?: string): number {
+  if (!input) return 1;
+  const hours = EXPIRY_HOURS[input];
+  if (hours !== undefined) return hours;
+  const num = parseInt(input, 10);
+  if (!isNaN(num) && num > 0) return num / 3600;
+  return 1;
+}
