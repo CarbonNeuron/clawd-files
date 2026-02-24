@@ -18,7 +18,7 @@ export function ImagePreview({ bucketId, filePath }: ImagePreviewProps) {
         width={0}
         height={0}
         sizes="(max-width: 1152px) 100vw, 1152px"
-        className="h-auto w-auto max-w-full max-h-[80vh] rounded object-contain"
+        className="h-auto w-auto min-w-48 min-h-48 max-w-full max-h-[80vh] rounded object-contain"
         unoptimized
       />
     </div>
