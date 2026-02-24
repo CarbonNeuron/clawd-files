@@ -94,3 +94,47 @@ export function verifyDashboardToken(token: string): boolean {
     return false;
   }
 }
+
+export function generateUploadToken(bucketId: string, validHours: number = 1): string {
+  const adminKey = process.env.ADMIN_API_KEY!;
+  const expiresAt = Math.floor(Date.now() / 1000) + validHours * 3600;
+  const payload = `${bucketId}:${expiresAt}`;
+  const signature = createHmac("sha256", adminKey)
+    .update(payload)
+    .digest("hex");
+  return Buffer.from(`${payload}.${signature}`).toString("base64url");
+}
+
+export function verifyUploadToken(token: string): { bucketId: string } | null {
+  try {
+    const adminKey = process.env.ADMIN_API_KEY;
+    if (!adminKey) return null;
+
+    const decoded = Buffer.from(token, "base64url").toString();
+    const dotIndex = decoded.lastIndexOf(".");
+    if (dotIndex === -1) return null;
+
+    const payload = decoded.slice(0, dotIndex);
+    const signature = decoded.slice(dotIndex + 1);
+
+    const colonIndex = payload.lastIndexOf(":");
+    if (colonIndex === -1) return null;
+
+    const bucketId = payload.slice(0, colonIndex);
+    const expiresAt = parseInt(payload.slice(colonIndex + 1), 10);
+
+    if (!bucketId || isNaN(expiresAt)) return null;
+    if (expiresAt < Math.floor(Date.now() / 1000)) return null;
+
+    const expected = createHmac("sha256", adminKey)
+      .update(payload)
+      .digest("hex");
+
+    if (signature.length !== expected.length) return null;
+    if (!timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
+
+    return { bucketId };
+  } catch {
+    return null;
+  }
+}

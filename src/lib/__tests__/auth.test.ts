@@ -8,6 +8,8 @@ import {
   authenticate,
   generateDashboardToken,
   verifyDashboardToken,
+  generateUploadToken,
+  verifyUploadToken,
 } from "../auth";
 import { db } from "../db";
 import { apiKeys, buckets, files } from "../schema";
@@ -72,5 +74,34 @@ describe("dashboard tokens", () => {
   it("rejects expired token", () => {
     const token = generateDashboardToken(-1);
     expect(verifyDashboardToken(token)).toBe(false);
+  });
+});
+
+describe("upload tokens", () => {
+  it("generates and verifies a valid token for a bucket", () => {
+    const result = verifyUploadToken(generateUploadToken("testbucket"));
+    expect(result).toEqual({ bucketId: "testbucket" });
+  });
+
+  it("rejects tampered token", () => {
+    expect(verifyUploadToken("tampered.token")).toBeNull();
+  });
+
+  it("rejects expired token", () => {
+    const token = generateUploadToken("testbucket", -1);
+    expect(verifyUploadToken(token)).toBeNull();
+  });
+
+  it("returns correct bucket ID from token", () => {
+    const result = verifyUploadToken(generateUploadToken("abc123defg"));
+    expect(result).toEqual({ bucketId: "abc123defg" });
+  });
+
+  it("rejects token with modified bucket ID", () => {
+    const token = generateUploadToken("bucket-a");
+    const decoded = Buffer.from(token, "base64url").toString();
+    const modified = decoded.replace("bucket-a", "bucket-b");
+    const reEncoded = Buffer.from(modified).toString("base64url");
+    expect(verifyUploadToken(reEncoded)).toBeNull();
   });
 });
