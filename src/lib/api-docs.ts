@@ -80,13 +80,15 @@ export const API_DOCS: EndpointGroup[] = [
         method: "POST",
         path: "/api/buckets",
         description:
-          'Create a new bucket. Requires an API key (not the admin key). The "owner" field is auto-populated from the API key\'s name — do not send it.\n\nRequest body fields:\n- **name** (string, required): Bucket display name.\n- **description** (string, optional): Bucket description.\n- **for** (string, optional): Purpose label (e.g. "code-review").\n- **expires_in** (string, optional): Expiry preset or seconds. Presets: 1h, 6h, 12h, 1d, 3d, 1w, 2w, 1m, never. Defaults to **7 days** (1w) if omitted or invalid.',
+          'Create a new bucket. Requires an API key (not the admin key). The "owner" field is auto-populated from the API key\'s name — do not send it.\n\nRequest body fields:\n- **name** (string, required): Bucket display name.\n- **description** (string, optional): Bucket description.\n- **for** (string, optional): Purpose label (e.g. "code-review").\n- **expires_in** (string, optional): Expiry preset or seconds. Presets: 1h, 6h, 12h, 1d, 3d, 1w, 2w, 1m, never. Defaults to **7 days** (1w) if omitted or invalid.\n- **generate_upload_link** (boolean, optional): If true, generates a pre-signed upload URL and includes it as `upload_url` in the response.\n- **upload_link_expires_in** (string, optional): Expiry for the upload link. Same presets as expires_in. Defaults to 1h.',
         auth: "api_key",
         requestBody: {
           name: "my-project",
           description: "Project source files",
           for: "code-review",
           expires_in: "1w",
+          generate_upload_link: true,
+          upload_link_expires_in: "1h",
         },
         responseExample: {
           id: "abc123defg",
@@ -98,6 +100,7 @@ export const API_DOCS: EndpointGroup[] = [
           expires_at: 1700604800,
           url: `${BASE}/abc123defg`,
           api_url: `${BASE}/api/buckets/abc123defg`,
+          upload_url: `${BASE}/upload/abc123defg?token=eyJ...`,
         },
         curl: `curl -X POST ${BASE}/api/buckets \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"name": "my-project", "description": "Project source files", "for": "code-review", "expires_in": "1w"}'`,
       },
@@ -198,7 +201,7 @@ export const API_DOCS: EndpointGroup[] = [
         method: "POST",
         path: "/api/buckets/:id/upload",
         description:
-          'Upload files via multipart/form-data. Accepts multiple files in a single request. The form field name determines the file path: use a generic name (file, files, upload, uploads, blob) to keep the original filename, or set the field name to a custom path (e.g. "src/main.rs") to override it. Re-uploading the same path overwrites the existing file. Each uploaded file gets a short_url — a compact, shareable link (e.g. /s/xK9mQ2) that redirects to the raw file.',
+          'Upload files via multipart/form-data. Accepts multiple files in a single request.\n\n**Auth:** Owner/admin via API key, OR a valid upload token via `?token=` query param (from the upload-link endpoint).\n\nThe form field name determines the file path: use a generic name (file, files, upload, uploads, blob) to keep the original filename, or set the field name to a custom path (e.g. "src/main.rs") to override it. Re-uploading the same path overwrites the existing file. Each uploaded file gets a short_url — a compact, shareable link (e.g. /s/xK9mQ2) that redirects to the raw file.',
         auth: "owner",
         responseExample: {
           uploaded: [
@@ -223,6 +226,20 @@ export const API_DOCS: EndpointGroup[] = [
           ],
         },
         curl: `# Upload multiple files (use -F for each file):\ncurl -X POST ${BASE}/api/buckets/abc123defg/upload \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -F "files=@screenshot.png" \\\n  -F "files=@README.md"\n\n# Upload with custom path (field name = desired path):\ncurl -X POST ${BASE}/api/buckets/abc123defg/upload \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -F "src/main.rs=@main.rs"`,
+      },
+      {
+        method: "POST",
+        path: "/api/buckets/:id/upload-link",
+        description:
+          'Generate a pre-signed upload URL for a bucket. The URL can be shared with anyone — they can upload files by opening it in a browser (drag-and-drop UI) or via curl, without needing an API key. The link expires after the specified duration.\n\nRequest body fields:\n- **expires_in** (string, optional): Expiry preset. Presets: 1h, 6h, 12h, 1d, 3d, 1w. Defaults to **1 hour** (1h) if omitted.',
+        auth: "owner",
+        requestBody: { expires_in: "1h" },
+        responseExample: {
+          upload_url: `${BASE}/upload/abc123defg?token=eyJ...`,
+          expires_in: "1h",
+          bucket: { id: "abc123defg", name: "my-project" },
+        },
+        curl: `curl -X POST ${BASE}/api/buckets/abc123defg/upload-link \\\n  -H "Authorization: Bearer $API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"expires_in": "1h"}'`,
       },
       {
         method: "DELETE",

@@ -153,7 +153,9 @@ Delete a bucket and all its files. Owner or admin only.
 ### Files
 
 #### POST ${baseUrl}/api/buckets/{id}/upload
-Upload files via multipart/form-data. Owner or admin only.
+Upload files via multipart/form-data.
+
+Auth: Owner/admin via API key, OR a valid upload token via ?token= query param.
 
 Accepts MULTIPLE files in a single request — use one -F flag per file.
 
@@ -210,6 +212,41 @@ Delete a specific file by path. Owner or admin only.
 Response (200):
 
     {"deleted": true, "path": "src/main.rs"}
+
+---
+
+### Upload Links
+
+#### POST ${baseUrl}/api/buckets/{id}/upload-link
+Generate a pre-signed upload URL for a bucket. Share this URL with anyone — they can upload files by opening it in a browser (drag-and-drop UI) or via curl, without needing an API key.
+
+Request body fields:
+- expires_in (string, optional): Expiry preset. Presets: 1h, 6h, 12h, 1d, 3d, 1w. Default: 1 hour (1h).
+
+    curl -X POST ${baseUrl}/api/buckets/abc123defg/upload-link \\
+      -H "Authorization: Bearer $API_KEY" \\
+      -H "Content-Type: application/json" \\
+      -d '{"expires_in": "1h"}'
+
+Response (200):
+
+    {
+      "upload_url": "${baseUrl}/upload/abc123defg?token=...",
+      "expires_in": "1h",
+      "bucket": {"id": "abc123defg", "name": "my-project"}
+    }
+
+You can also generate an upload link when creating a bucket by including generate_upload_link: true:
+
+    curl -X POST ${baseUrl}/api/buckets \\
+      -H "Authorization: Bearer $API_KEY" \\
+      -H "Content-Type: application/json" \\
+      -d '{"name": "my-project", "generate_upload_link": true, "upload_link_expires_in": "1h"}'
+
+The upload URL also accepts direct multipart POST requests (for curl/programmatic use):
+
+    curl -X POST "${baseUrl}/api/buckets/abc123defg/upload?token=TOKEN_HERE" \\
+      -F "files=@screenshot.png"
 
 ---
 
