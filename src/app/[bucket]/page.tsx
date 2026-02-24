@@ -1,10 +1,11 @@
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { buckets, files } from "@/lib/schema";
 import { isExpired } from "@/lib/expiry";
+import { encodePath } from "@/lib/urls";
 import { eq } from "drizzle-orm";
 import { PageShell } from "@/components/page-shell";
 import { BucketHeader } from "@/components/bucket-header";
@@ -92,6 +93,11 @@ export default async function BucketPage({
     .from(files)
     .where(eq(files.bucketId, bucketId))
     .all();
+
+  // If the bucket has exactly one file, redirect to it
+  if (bucketFiles.length === 1 && !currentPath) {
+    redirect(`/${bucketId}/${encodePath(bucketFiles[0].path)}`);
+  }
 
   const fileEntries: FileEntry[] = bucketFiles.map((f) => ({
     path: f.path,
